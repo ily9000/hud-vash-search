@@ -1,87 +1,50 @@
 # HUD-VASH Rental Search Tool
 
-A web app for VA HUD-VASH case managers to search rental listings within HACC payment standards for Cook County, IL.
+A web app that helps VA case managers find affordable housing for homeless veterans. Currently configured for Cook County, IL, with plans to expand nationwide.
 
-## Features
+## The Problem
 
-- Search by bedroom count (Studio through 4BR)
-- Enter multiple ZIP codes at once
-- Automatically filters listings by HACC payment standards
-- Shows qualifying rentals with price comparison
+HUD-VASH case managers help homeless veterans find housing using housing vouchers. Finding a qualifying rental is tedious and time-consuming:
 
-## Setup Instructions
+- **Payment standards vary by ZIP code** - every housing authority sets different rates by location. For example, Cook County alone has 26 different payment tiers across 130+ towns
+- **The "lesser of" rule is confusing** - if a veteran with a 2BR voucher wants a 3BR unit, the payment standard is capped at the 2BR rate
+- **Manual searching takes time** - about 20 minutes per veteran per week checking Zillow, Apartments.com, and Craigslist, then cross-referencing against payment standard tables. Across hundreds of veterans nationwide, this adds up fast
+- **No way to track progress** - which listings has this veteran already seen and rejected?
 
-### 1. Get a RentCast API Key
+## What This Tool Does
 
-1. Go to [rentcast.io](https://rentcast.io)
-2. Sign up for a free account
-3. Navigate to API settings and copy your API key
-4. Free tier includes 50 API calls/month
+- **Searches rental listings** by town or ZIP code
+- **Automatically applies payment standards** using HACC 2026 rates
+- **Handles the "lesser of" rule** correctly
+- **Saves veteran profiles** with preferred towns and voucher size
+- **Tracks "Not Interested" listings** so rejected properties don't keep showing up
+- **Links directly to Zillow, Apartments.com, and Google** for each listing
 
-### 2. Deploy to Streamlit Cloud (Recommended)
+## How Payment Standards Work
 
-1. **Create a GitHub account** (if you don't have one): [github.com](https://github.com)
+The app uses the "lesser of" rule - the payment standard is based on whichever is smaller: the unit's bedroom count or the voucher's bedroom count.
 
-2. **Upload this code to GitHub**:
-   - Click "New repository"
-   - Name it `hud-vash-search`
-   - Upload all files from this folder
+**Example**: A veteran has a 2BR voucher.
 
-3. **Deploy to Streamlit Cloud**:
-   - Go to [share.streamlit.io](https://share.streamlit.io)
-   - Sign in with GitHub
-   - Click "New app"
-   - Select your `hud-vash-search` repository
-   - Set main file path to `app.py`
-   - Click "Deploy"
+| Unit They Find | Payment Standard Used | Why |
+|----------------|----------------------|-----|
+| 1BR | 1BR rate | Unit is smaller than voucher |
+| 2BR | 2BR rate | Exact match |
+| 3BR | 2BR rate | Capped at voucher size |
 
-4. **Add your API key**:
-   - In your deployed app, click "Settings" (gear icon)
-   - Go to "Secrets"
-   - Add:
-     ```
-     RENTCAST_API_KEY = "your-api-key-here"
-     ```
-   - Click "Save"
+This means veterans can look at larger units, but HUD won't pay more than their voucher allows.
 
-5. **Share the app URL** with your team
+## Quick Start
 
-### 3. Run Locally (Optional)
+1. **Select a veteran** from the dropdown (or "New Search" for quick lookups)
+2. **Set voucher size** - their bedroom entitlement
+3. **Pick bedroom sizes to search** - can select multiple
+4. **Select towns** - type to search, click to add
+5. **Click Search**
 
-For testing before deployment:
+Results show only listings within the payment standard. Click **X** to mark listings as "Not Interested" for that veteran.
 
-```bash
-# Install dependencies
-pip install -r requirements.txt
+## Data
 
-# Create secrets file
-mkdir -p .streamlit
-echo 'RENTCAST_API_KEY = "your-api-key-here"' > .streamlit/secrets.toml
-
-# Run the app
-streamlit run app.py
-```
-
-The app will open at http://localhost:8501
-
-## Usage
-
-1. Select bedroom count from the dropdown
-2. Enter one or more ZIP codes (comma-separated)
-3. Click "Search"
-4. Review qualifying rentals that fall within payment standards
-
-## Payment Standards
-
-This app uses HACC (Housing Authority of Cook County) payment standards effective January 1, 2026. To update the standards when new rates are published, the `payment_standards.py` file needs to be updated.
-
-## Files
-
-- `app.py` - Main Streamlit application
-- `payment_standards.py` - HACC payment standards lookup table
-- `requirements.txt` - Python dependencies
-- `README.md` - This file
-
-## Support
-
-For issues with this tool, contact your IT support or the developer who set it up.
+- **Listings**: RentCast API
+- **Payment Standards**: Housing Authority of Cook County (HACC), effective January 1, 2026

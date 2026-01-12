@@ -439,3 +439,173 @@ def get_all_zip_codes() -> list[str]:
 def is_valid_zip(zip_code: str) -> bool:
     """Check if a ZIP code is in the HACC payment standards."""
     return str(zip_code).strip() in ZIP_TO_RANGE
+
+
+# Town name to ZIP code mapping (from HACC PDF page 1)
+TOWN_TO_ZIPS = {
+    "Alsip": ["60803"],
+    "Argo": ["60501"],
+    "Arlington Heights": ["60004", "60005", "60006"],
+    "Barrington": ["60010", "60011"],
+    "Barrington Hills": ["60010"],
+    "Bartlett": ["60103"],
+    "Bedford Park": ["60455", "60458", "60459"],
+    "Bellwood": ["60104"],
+    "Berkeley": ["60163"],
+    "Berwyn": ["60402"],
+    "Blue Island": ["60406"],
+    "Bridgeview": ["60455"],
+    "Broadview": ["60153", "60155"],
+    "Brookfield": ["60513"],
+    "Buffalo Grove": ["60089"],
+    "Burbank": ["60459"],
+    "Burnham": ["60633"],
+    "Burr Ridge": ["60527"],
+    "Calumet City": ["60409"],
+    "Calumet Park": ["60643", "60827"],
+    "Chicago": ["60601", "60602", "60603", "60604", "60605", "60606", "60607", "60608", "60609", "60610", "60611", "60612", "60613", "60614", "60615", "60616", "60617", "60618", "60619", "60620", "60621", "60622", "60623", "60624", "60625", "60626", "60628", "60629", "60630", "60631", "60632", "60633", "60634", "60636", "60637", "60638", "60639", "60640", "60641", "60642", "60643", "60644", "60645", "60646", "60647", "60649", "60651", "60652", "60653", "60654", "60655", "60656", "60657", "60659", "60660", "60661"],
+    "Chicago Heights": ["60411", "60412"],
+    "Chicago Ridge": ["60415"],
+    "Cicero": ["60804"],
+    "Country Club Hills": ["60478"],
+    "Countryside": ["60525"],
+    "Crestwood": ["60418", "60445"],
+    "Deer Park": ["60010"],
+    "Deerfield": ["60015"],
+    "Des Plaines": ["60016", "60017", "60018"],
+    "Dixmoor": ["60406", "60426"],
+    "Dolton": ["60419", "60429"],
+    "East Hazel Crest": ["60429"],
+    "Elk Grove Village": ["60007"],
+    "Elmwood Park": ["60707"],
+    "Evanston": ["60201", "60202", "60203", "60204"],
+    "Evergreen Park": ["60805"],
+    "Flossmoor": ["60422"],
+    "Forest Park": ["60130"],
+    "Forest View": ["60155"],
+    "Franklin Park": ["60131"],
+    "Glencoe": ["60022"],
+    "Glenview": ["60025", "60026"],
+    "Glenwood": ["60425"],
+    "Golf": ["60029"],
+    "Hanover Park": ["60133"],
+    "Harvey": ["60426"],
+    "Harwood Heights": ["60706"],
+    "Hazel Crest": ["60429"],
+    "Hickory Hills": ["60457"],
+    "Hillside": ["60162"],
+    "Hines": ["60141"],
+    "Hodgkins": ["60525"],
+    "Hoffman Estates": ["60169", "60192", "60195"],
+    "Hometown": ["60456"],
+    "Homewood": ["60430"],
+    "Indian Head Park": ["60525"],
+    "Inverness": ["60010", "60067"],
+    "Justice": ["60458"],
+    "Kenilworth": ["60043"],
+    "La Grange": ["60525"],
+    "La Grange Highlands": ["60525"],
+    "La Grange Park": ["60526"],
+    "Lansing": ["60438"],
+    "Lemont": ["60439"],
+    "Lincolnwood": ["60712"],
+    "Lynwood": ["60411"],
+    "Lyons": ["60534"],
+    "Markham": ["60428"],
+    "Matteson": ["60443"],
+    "Maywood": ["60153"],
+    "McCook": ["60525"],
+    "Melrose Park": ["60160", "60164", "60165"],
+    "Merrionette Park": ["60655"],
+    "Midlothian": ["60445"],
+    "Morton Grove": ["60053"],
+    "Mount Prospect": ["60056"],
+    "Niles": ["60714"],
+    "Norridge": ["60706"],
+    "North Riverside": ["60546"],
+    "Northbrook": ["60062", "60065"],
+    "Northfield": ["60093"],
+    "Northlake": ["60164"],
+    "Oak Brook": ["60523"],
+    "Oak Forest": ["60452"],
+    "Oak Lawn": ["60453", "60454", "60455", "60456", "60457", "60458", "60459"],
+    "Oak Park": ["60301", "60302", "60304", "60305"],
+    "Olympia Fields": ["60461"],
+    "Orland Hills": ["60477", "60487"],
+    "Orland Park": ["60462", "60467"],
+    "Palatine": ["60067", "60074", "60078"],
+    "Palos Heights": ["60463"],
+    "Palos Hills": ["60465"],
+    "Palos Park": ["60464"],
+    "Park Forest": ["60466"],
+    "Park Ridge": ["60068"],
+    "Phoenix": ["60426"],
+    "Posen": ["60469"],
+    "Prospect Heights": ["60070"],
+    "Richton Park": ["60471"],
+    "River Forest": ["60305"],
+    "River Grove": ["60171"],
+    "Riverdale": ["60827"],
+    "Riverside": ["60546"],
+    "Robbins": ["60472"],
+    "Rolling Meadows": ["60008"],
+    "Rosemont": ["60018"],
+    "Sauk Village": ["60411"],
+    "Schaumburg": ["60159", "60168", "60173", "60193", "60194", "60195"],
+    "Schiller Park": ["60176"],
+    "Skokie": ["60076", "60077"],
+    "South Barrington": ["60010"],
+    "South Chicago Heights": ["60411"],
+    "South Holland": ["60473"],
+    "Steger": ["60475"],
+    "Stickney": ["60402"],
+    "Stone Park": ["60165"],
+    "Streamwood": ["60107"],
+    "Summit": ["60501"],
+    "Thornton": ["60476"],
+    "Tinley Park": ["60477", "60478", "60487"],
+    "University Park": ["60466", "60484"],
+    "Westchester": ["60154"],
+    "Western Springs": ["60558"],
+    "Wheeling": ["60090"],
+    "Willow Springs": ["60480"],
+    "Wilmette": ["60091"],
+    "Winnetka": ["60093"],
+    "Worth": ["60482"],
+}
+
+
+def get_all_towns() -> list[str]:
+    """Return a sorted list of all town names."""
+    return sorted(TOWN_TO_ZIPS.keys())
+
+
+def get_zips_for_town(town: str) -> list[str]:
+    """Get ZIP codes for a town name. Returns empty list if not found."""
+    return TOWN_TO_ZIPS.get(town, [])
+
+
+def resolve_location(location: str) -> list[str]:
+    """
+    Convert a location (town name or ZIP code) to a list of ZIP codes.
+
+    Args:
+        location: Either a town name or a ZIP code
+
+    Returns:
+        List of ZIP codes
+    """
+    location = location.strip()
+
+    # Check if it's a ZIP code (5 digits)
+    if len(location) == 5 and location.isdigit():
+        if is_valid_zip(location):
+            return [location]
+        return []
+
+    # Try to match as town name (case-insensitive)
+    for town, zips in TOWN_TO_ZIPS.items():
+        if town.lower() == location.lower():
+            return zips
+
+    return []
