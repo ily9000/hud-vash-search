@@ -495,34 +495,34 @@ if search_clicked and location_input:
                                 st.markdown(f"[Apartments.com]({apartments_url})")
                                 st.markdown(f"[Google]({google_url})")
 
-                            with col4:
-                                # Not Interested button (only if veteran selected)
-                                if selected_veteran != "-- New Search --":
-                                    if st.button("X", key=f"not_int_{i}", help="Not interested"):
-                                        add_not_interested(selected_veteran, address, price, veterans)
-                                        st.rerun()
+                            # Not Interested button hidden for now
+                            # with col4:
+                            #     if selected_veteran != "-- New Search --":
+                            #         if st.button("X", key=f"not_int_{i}", help="Not interested"):
+                            #             add_not_interested(selected_veteran, address, price, veterans)
+                            #             st.rerun()
 
                             st.markdown("---")
                 else:
                     st.info("No affordable listings found matching your criteria.")
 
-                # Show Not Interested section (collapsed)
-                if not_interested_listings and selected_veteran != "-- New Search --":
-                    with st.expander(f"Not Interested ({len(not_interested_listings)})"):
-                        st.caption("Listings this veteran marked as not interested. Click Restore to show again.")
-                        for i, listing in enumerate(not_interested_listings):
-                            address = listing.get("formattedAddress", "Address not available")
-                            price = listing.get("price")
-                            listing_br = listing.get("bedrooms", 0) or 0
-                            br_display = "Studio" if listing_br == 0 else f"{listing_br}BR"
-
-                            col1, col2 = st.columns([4, 1])
-                            with col1:
-                                st.markdown(f"**{br_display}** - {address} - **{format_price(price)}**")
-                            with col2:
-                                if st.button("Restore", key=f"restore_{i}"):
-                                    remove_not_interested(selected_veteran, address, price, veterans)
-                                    st.rerun()
+                # Not Interested section hidden for now
+                # if not_interested_listings and selected_veteran != "-- New Search --":
+                #     with st.expander(f"Not Interested ({len(not_interested_listings)})"):
+                #         st.caption("Listings this veteran marked as not interested. Click Restore to show again.")
+                #         for i, listing in enumerate(not_interested_listings):
+                #             address = listing.get("formattedAddress", "Address not available")
+                #             price = listing.get("price")
+                #             listing_br = listing.get("bedrooms", 0) or 0
+                #             br_display = "Studio" if listing_br == 0 else f"{listing_br}BR"
+                #
+                #             col1, col2 = st.columns([4, 1])
+                #             with col1:
+                #                 st.markdown(f"**{br_display}** - {address} - **{format_price(price)}**")
+                #             with col2:
+                #                 if st.button("Restore", key=f"restore_{i}"):
+                #                     remove_not_interested(selected_veteran, address, price, veterans)
+                #                     st.rerun()
         else:
             st.error("No valid locations found. Try entering town names like 'Evanston' or ZIP codes like '60601'.")
 
