@@ -6,12 +6,9 @@ A Streamlit web app that searches rental listings and filters by HACC payment st
 
 import streamlit as st
 import requests
-import json
-import os
 import urllib.parse
 from payment_standards import (
     get_payment_standard,
-    is_valid_zip,
     get_all_towns,
     resolve_location
 )
@@ -22,52 +19,6 @@ st.set_page_config(
     page_icon="🏠",
     layout="wide"
 )
-
-
-def check_password():
-    """Returns True if the user has entered the correct password."""
-    def password_entered():
-        if st.session_state["password"] == st.secrets.get("APP_PASSWORD", ""):
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]
-        else:
-            st.session_state["password_correct"] = False
-
-    if st.secrets.get("APP_PASSWORD"):
-        if st.session_state.get("password_correct", False):
-            return True
-
-        st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
-        )
-        if "password_correct" in st.session_state and not st.session_state["password_correct"]:
-            st.error("Incorrect password")
-        return False
-    return True
-
-
-if not check_password():
-    st.stop()
-
-# Veterans data file path
-VETERANS_FILE = os.path.join(os.path.dirname(__file__), "veterans.json")
-
-
-def load_veterans() -> dict:
-    """Load veteran profiles from JSON file."""
-    if os.path.exists(VETERANS_FILE):
-        try:
-            with open(VETERANS_FILE, "r") as f:
-                return json.load(f)
-        except (json.JSONDecodeError, IOError):
-            return {}
-    return {}
-
-
-def save_veterans(veterans: dict):
-    """Save veteran profiles to JSON file."""
-    with open(VETERANS_FILE, "w") as f:
-        json.dump(veterans, f, indent=2)
 
 
 def get_api_key():
@@ -116,66 +67,14 @@ def format_price(price: int | float | None) -> str:
     return f"${price:,.0f}/mo"
 
 
-def is_not_interested(listing: dict, not_interested_list: list) -> bool:
-    """Check if a listing is in the not_interested list (by address + price)."""
-    address = listing.get("formattedAddress", "")
-    price = listing.get("price")
-    for item in not_interested_list:
-        if item.get("address") == address and item.get("price") == price:
-            return True
-    return False
-
-
-def add_not_interested(veteran_name: str, address: str, price: int | float | None, veterans: dict):
-    """Add a listing to a veteran's not_interested list."""
-    if veteran_name not in veterans:
-        return
-    if "not_interested" not in veterans[veteran_name]:
-        veterans[veteran_name]["not_interested"] = []
-    # Check if already in list
-    for item in veterans[veteran_name]["not_interested"]:
-        if item.get("address") == address and item.get("price") == price:
-            return  # Already exists
-    veterans[veteran_name]["not_interested"].append({"address": address, "price": price})
-    save_veterans(veterans)
-
-
-def remove_not_interested(veteran_name: str, address: str, price: int | float | None, veterans: dict):
-    """Remove a listing from a veteran's not_interested list."""
-    if veteran_name not in veterans:
-        return
-    if "not_interested" not in veterans[veteran_name]:
-        return
-    veterans[veteran_name]["not_interested"] = [
-        item for item in veterans[veteran_name]["not_interested"]
-        if not (item.get("address") == address and item.get("price") == price)
-    ]
-    save_veterans(veterans)
-
-
 # Title
 st.title("HUD-VASH Rental Search")
 st.markdown("**Cook County, IL** - Search rentals within HACC payment standards")
 st.markdown("---")
 
-# Load veterans data
-veterans = load_veterans()
-
 # Sidebar with search form
 with st.sidebar:
-    st.header("Search")
-
-    # Veteran selector
-    veteran_options = ["-- New Search --"] + sorted(veterans.keys())
-    selected_veteran = st.selectbox("Select Veteran", options=veteran_options)
-
-    # Get defaults from selected veteran
-    if selected_veteran != "-- New Search --" and selected_veteran in veterans:
-        default_towns = ", ".join(veterans[selected_veteran].get("towns", []))
-        default_bedrooms = veterans[selected_veteran].get("bedrooms", 1)
-    else:
-        default_towns = ""
-        default_bedrooms = 1
+    st.header("Search Criteria")
 
     # Bedroom options mapping
     bedroom_options = {
@@ -186,38 +85,31 @@ with st.sidebar:
         "4 Bedroom": 4
     }
     bedroom_labels = list(bedroom_options.keys())
-    default_bedroom_index = list(bedroom_options.values()).index(default_bedrooms) if default_bedrooms in bedroom_options.values() else 1
 
     # Voucher bedroom size (what the veteran is entitled to)
     voucher_label = st.selectbox(
         "Voucher Bedroom Size",
         options=bedroom_labels,
-        index=default_bedroom_index,
-        help="The veteran's voucher entitlement (used for payment standard calculation)"
+        index=1,  # Default to 1 Bedroom
+        help="The voucher entitlement size (used for payment standard calculation)"
     )
     voucher_bedrooms = bedroom_options[voucher_label]
 
     # Bedroom search filter (which unit sizes to show)
-    default_search_filter = [voucher_label]  # Default to voucher size
     search_bedroom_labels = st.multiselect(
-        "Search for Bedrooms",
+        "Unit Sizes to Search",
         options=bedroom_labels,
-        default=default_search_filter,
+        default=[voucher_label],
         help="Which unit sizes to search for (can select multiple)"
     )
-    # Convert labels to bedroom counts
     search_bedrooms = [bedroom_options[label] for label in search_bedroom_labels]
 
     # Town selector with autocomplete (multiselect with search)
     all_towns = get_all_towns()
 
-    # Parse default towns into list for multiselect
-    default_town_list = [t.strip() for t in default_towns.split(",") if t.strip() and t.strip() in all_towns]
-
     selected_towns = st.multiselect(
         "Select Towns",
         options=all_towns,
-        default=default_town_list,
         placeholder="Type to search towns...",
         help="Start typing to filter towns, then click to select"
     )
@@ -235,93 +127,11 @@ with st.sidebar:
         location_input = f"{location_input}, {extra_zips}" if location_input else extra_zips
 
     # Search button
-    search_clicked = st.button("Search", type="primary", use_container_width=True)
-
-    st.markdown("---")
-
-    # Add/Edit Veteran section
-    with st.expander("Manage Veterans"):
-        # Edit existing veteran
-        if veterans:
-            st.subheader("Edit Veteran")
-            edit_veteran = st.selectbox(
-                "Select veteran to edit",
-                options=[""] + sorted(veterans.keys()),
-                key="edit_vet_select"
-            )
-
-            if edit_veteran:
-                vet_data = veterans[edit_veteran]
-                current_towns = vet_data.get("towns", [])
-                current_br = vet_data.get("bedrooms", 1)
-                current_br_index = list(bedroom_options.values()).index(current_br) if current_br in bedroom_options.values() else 1
-
-                edit_towns = st.multiselect(
-                    "Preferred Towns",
-                    options=all_towns,
-                    default=current_towns,
-                    key="edit_vet_towns",
-                    placeholder="Type to search..."
-                )
-                edit_br = st.selectbox(
-                    "Voucher Bedroom Size",
-                    options=bedroom_labels,
-                    index=current_br_index,
-                    key="edit_vet_br"
-                )
-
-                col1, col2 = st.columns(2)
-                with col1:
-                    if st.button("Save Changes", key="save_edit"):
-                        veterans[edit_veteran] = {
-                            "towns": edit_towns,
-                            "bedrooms": bedroom_options[edit_br]
-                        }
-                        save_veterans(veterans)
-                        st.success(f"Updated {edit_veteran}")
-                        st.rerun()
-                with col2:
-                    if st.button("Delete", type="secondary", key="delete_edit"):
-                        del veterans[edit_veteran]
-                        save_veterans(veterans)
-                        st.success(f"Deleted {edit_veteran}")
-                        st.rerun()
-
-            st.markdown("---")
-
-        # Add new veteran
-        st.subheader("Add New Veteran")
-        new_veteran_name = st.text_input("Veteran Name", key="new_vet_name")
-        new_veteran_towns = st.multiselect(
-            "Preferred Towns",
-            options=all_towns,
-            key="new_vet_towns",
-            placeholder="Type to search..."
-        )
-        new_veteran_bedrooms = st.selectbox(
-            "Voucher Bedroom Size",
-            options=bedroom_labels,
-            key="new_vet_bedrooms"
-        )
-
-        if st.button("Add Veteran"):
-            if new_veteran_name:
-                if new_veteran_name in veterans:
-                    st.error(f"{new_veteran_name} already exists. Select them above to edit.")
-                else:
-                    veterans[new_veteran_name] = {
-                        "towns": new_veteran_towns,
-                        "bedrooms": bedroom_options[new_veteran_bedrooms]
-                    }
-                    save_veterans(veterans)
-                    st.success(f"Added {new_veteran_name}")
-                    st.rerun()
-            else:
-                st.error("Please enter a veteran name")
+    search_clicked = st.button("Search Rentals", type="primary", use_container_width=True)
 
     st.markdown("---")
     st.markdown("**Payment Standards:** HACC 2026")
-    st.caption(f"Available towns: {len(get_all_towns())}")
+    st.caption(f"{len(get_all_towns())} towns available")
 
 
 # Main content area - Search Results
@@ -421,14 +231,8 @@ if search_clicked and location_input:
                         if (listing.get("bedrooms", 0) or 0) in search_bedrooms
                     ]
 
-                # Get not_interested list for selected veteran
-                not_interested_list = []
-                if selected_veteran != "-- New Search --" and selected_veteran in veterans:
-                    not_interested_list = veterans[selected_veteran].get("not_interested", [])
-
                 # Filter to only show affordable listings (within payment standard)
                 affordable_listings = []
-                not_interested_listings = []
                 for listing in all_listings:
                     price = listing.get("price")
                     payment_std = listing.get("_payment_standard")
@@ -437,15 +241,10 @@ if search_clicked and location_input:
                     is_affordable = (price is None or payment_std is None or payment_std == 0 or price <= payment_std)
 
                     if is_affordable:
-                        # Check if in not_interested list
-                        if is_not_interested(listing, not_interested_list):
-                            not_interested_listings.append(listing)
-                        else:
-                            affordable_listings.append(listing)
+                        affordable_listings.append(listing)
 
-                # Sort by price
+                # Sort by price (lowest first)
                 affordable_listings.sort(key=lambda x: x.get("price") or 0)
-                not_interested_listings.sort(key=lambda x: x.get("price") or 0)
 
                 # Display summary
                 st.success(f"Found {len(affordable_listings)} affordable listings within payment standard.")
@@ -454,7 +253,7 @@ if search_clicked and location_input:
                 st.subheader(f"Affordable Listings ({len(affordable_listings)})")
 
                 if affordable_listings:
-                    for i, listing in enumerate(affordable_listings):
+                    for listing in affordable_listings:
                         address = listing.get("formattedAddress", "Address not available")
                         price = listing.get("price")
                         payment_std = listing.get("_payment_standard")
@@ -465,7 +264,7 @@ if search_clicked and location_input:
                         br_display = "Studio" if listing_br == 0 else f"{listing_br} BR"
 
                         with st.container():
-                            col1, col2, col3, col4 = st.columns([3, 1, 1, 0.5])
+                            col1, col2, col3 = st.columns([3, 1.5, 1])
 
                             with col1:
                                 st.markdown(f"**{address}**")
@@ -480,54 +279,30 @@ if search_clicked and location_input:
                                 st.markdown(f"**{format_price(price)}**")
                                 if price and payment_std:
                                     savings = payment_std - price
-                                    st.caption(f"${savings:,} under limit")
+                                    if savings > 0:
+                                        st.caption(f"${savings:,} under limit")
 
                             with col3:
-                                # Build search-friendly address formats
-                                zillow_addr = address.replace(",", "").replace(" ", "-")
-                                zillow_url = f"https://www.zillow.com/homes/{zillow_addr}_rb/"
-                                apartments_query = urllib.parse.quote(address)
-                                apartments_url = f"https://www.apartments.com/{apartments_query}/"
-                                google_query = urllib.parse.quote(f"{address} for rent")
+                                # Google search link for the address
+                                google_query = urllib.parse.quote(f"{address} rental")
                                 google_url = f"https://www.google.com/search?q={google_query}"
-
-                                st.markdown(f"[Zillow]({zillow_url})")
-                                st.markdown(f"[Apartments.com]({apartments_url})")
-                                st.markdown(f"[Google]({google_url})")
-
-                            # Not Interested button hidden for now
-                            # with col4:
-                            #     if selected_veteran != "-- New Search --":
-                            #         if st.button("X", key=f"not_int_{i}", help="Not interested"):
-                            #             add_not_interested(selected_veteran, address, price, veterans)
-                            #             st.rerun()
+                                st.link_button("Search Google", google_url, use_container_width=True)
 
                             st.markdown("---")
                 else:
                     st.info("No affordable listings found matching your criteria.")
-
-                # Not Interested section hidden for now
-                # if not_interested_listings and selected_veteran != "-- New Search --":
-                #     with st.expander(f"Not Interested ({len(not_interested_listings)})"):
-                #         st.caption("Listings this veteran marked as not interested. Click Restore to show again.")
-                #         for i, listing in enumerate(not_interested_listings):
-                #             address = listing.get("formattedAddress", "Address not available")
-                #             price = listing.get("price")
-                #             listing_br = listing.get("bedrooms", 0) or 0
-                #             br_display = "Studio" if listing_br == 0 else f"{listing_br}BR"
-                #
-                #             col1, col2 = st.columns([4, 1])
-                #             with col1:
-                #                 st.markdown(f"**{br_display}** - {address} - **{format_price(price)}**")
-                #             with col2:
-                #                 if st.button("Restore", key=f"restore_{i}"):
-                #                     remove_not_interested(selected_veteran, address, price, veterans)
-                #                     st.rerun()
         else:
             st.error("No valid locations found. Try entering town names like 'Evanston' or ZIP codes like '60601'.")
 
 elif search_clicked and not location_input:
-    st.error("Please enter at least one town or ZIP code")
+    st.error("Please select at least one town or enter a ZIP code")
+
+elif not search_clicked and api_key:
+    # Show welcome message when app first loads
+    st.info(
+        "**Get Started:** Select your voucher size and towns in the sidebar, "
+        "then click **Search Rentals** to find affordable listings."
+    )
 
 # Footer
 st.markdown("---")
