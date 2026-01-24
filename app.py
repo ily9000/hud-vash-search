@@ -9,7 +9,9 @@ import requests
 import urllib.parse
 from payment_standards import (
     get_payment_standard,
+    get_all_counties,
     get_all_towns,
+    get_all_zip_codes,
     resolve_location
 )
 

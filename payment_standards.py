@@ -580,6 +580,11 @@ def get_all_towns() -> list[str]:
     return sorted(TOWN_TO_ZIPS.keys())
 
 
+def get_all_counties() -> list[str]:
+    """Return a list of all counties with payment standards."""
+    return ["Cook County"]
+
+
 def get_zips_for_town(town: str) -> list[str]:
     """Get ZIP codes for a town name. Returns empty list if not found."""
     return TOWN_TO_ZIPS.get(town, [])
