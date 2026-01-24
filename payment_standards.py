@@ -1,13 +1,110 @@
 """
-HACC Payment Standards for Cook County, IL
-Effective January 1, 2026
-
-Data extracted from: Housing Authority of Cook County Payment Standards PDF
+Multi-County Payment Standards for Illinois Housing Authorities
+Supports Cook, DuPage, Will (Joliet), and Lake Counties
 """
 
-# Payment amounts by Range letter (A-Z) and bedroom count
-# Format: Range -> {bedrooms: amount}
-RANGE_AMOUNTS = {
+# =============================================================================
+# COUNTY REGISTRY
+# =============================================================================
+
+COUNTIES = {
+    "cook": {
+        "name": "Cook County",
+        "authority": "Housing Authority of Cook County (HACC)",
+        "effective_date": "January 1, 2026",
+        "url_slug": "Cook-County",
+        "type": "range",  # Uses A-Z range letter system
+        "explainer": """
+## How Cook County Payment Standards Work
+
+The Housing Authority of Cook County (HACC) uses a **tiered payment standard system**
+based on geographic zones. Each ZIP code is assigned a **Range Letter (A-Z)**, and each
+range has specific payment amounts by bedroom size.
+
+**Key Points:**
+- **26 payment tiers** from Range A (lowest) to Range Z (highest)
+- Payment standards vary significantly by neighborhood
+- Higher-cost areas like Barrington (Range Z) have standards nearly double lower-cost areas
+- The "lesser of" rule applies: if you rent a unit larger than your voucher size,
+  payment is capped at your voucher's bedroom standard
+
+**Example:** A 1-bedroom voucher holder in ZIP 60610 (Range Z) has a payment standard
+of $2,245/month, while the same voucher in ZIP 60406 (Range A) is $1,145/month.
+""",
+    },
+    "dupage": {
+        "name": "DuPage County",
+        "authority": "DuPage Housing Authority (DHA)",
+        "effective_date": "January 1, 2025",
+        "url_slug": "DuPage-County",
+        "type": "direct",  # Direct ZIP to amounts
+        "explainer": """
+## How DuPage County Payment Standards Work
+
+The DuPage Housing Authority (DHA) sets payment standards **directly by ZIP code**.
+Each ZIP code has specific maximum amounts for each bedroom size.
+
+**Key Points:**
+- Payment standards are set at the ZIP code level
+- Standards are based on HUD Small Area Fair Market Rents (SAFMRs)
+- DHA also covers Kendall County under a separate program
+- Utility allowances are subtracted from the payment standard
+
+**Example:** In Naperville (60540), the 2-bedroom payment standard is $2,250/month,
+while in Addison (60101) it's $1,580/month.
+""",
+    },
+    "will": {
+        "name": "Will County",
+        "authority": "Housing Authority of Joliet (HAJ)",
+        "effective_date": "October 1, 2025",
+        "url_slug": "Will-County",
+        "type": "direct",
+        "explainer": """
+## How Will County Payment Standards Work
+
+The Housing Authority of Joliet (HAJ) administers vouchers for all of Will County.
+Payment standards are set **by ZIP code** based on local market rents.
+
+**Key Points:**
+- Covers all of Will County including Joliet, Bolingbrook, Romeoville, Plainfield
+- Standards updated annually based on HUD Fair Market Rents
+- Some ZIP codes cross into other counties - verify property location
+
+**Example:** In Bolingbrook (60440), the 2-bedroom standard is $2,266/month,
+while in Joliet (60435) it's $1,793/month.
+""",
+    },
+    "lake": {
+        "name": "Lake County",
+        "authority": "Lake County Housing Authority (LCHA)",
+        "effective_date": "January 1, 2025",
+        "url_slug": "Lake-County",
+        "type": "direct",
+        "explainer": """
+## How Lake County Payment Standards Work
+
+The Lake County Housing Authority covers most of Lake County. Note that **Waukegan
+and North Chicago** have separate housing authorities with their own standards.
+
+**Key Points:**
+- Based on HUD Small Area Fair Market Rents (SAFMRs)
+- Wide variation between areas (Highland Park vs North Chicago)
+- Some ZIP codes cross county lines - verify property is in Lake County
+- Waukegan Housing Authority handles Waukegan separately
+
+**Example:** In Highland Park (60035), the 2-bedroom standard is $2,490/month,
+while in North Chicago (60064) it's $1,440/month.
+""",
+    },
+}
+
+
+# =============================================================================
+# COOK COUNTY DATA (Range-based system)
+# =============================================================================
+
+COOK_RANGE_AMOUNTS = {
     "A": {"studio": 1040, "1br": 1145, "2br": 1310, "3br": 1660, "4br": 1960},
     "B": {"studio": 1095, "1br": 1200, "2br": 1360, "3br": 1730, "4br": 2050},
     "C": {"studio": 1130, "1br": 1220, "2br": 1400, "3br": 1760, "4br": 2090},
@@ -36,415 +133,51 @@ RANGE_AMOUNTS = {
     "Z": {"studio": 2035, "1br": 2245, "2br": 2570, "3br": 3200, "4br": 3800},
 }
 
-# ZIP code to Range letter mapping
-# Extracted from HACC Payment Standards PDF (Pages 1-2)
-ZIP_TO_RANGE = {
-    # Page 1 - City/ZIP/Range mappings
-    "60803": "C",  # Alsip
-    "60501": "A",  # Argo
-    "60004": "T",  # Arlington Heights
-    "60005": "O",  # Arlington Heights
-    "60006": "L",  # Arlington Heights
-    "60010": "Z",  # Barrington
-    "60011": "M",  # Barrington
-    "60010": "Z",  # Barrington Hills
-    "60103": "W",  # Bartlett
-    "60133": "P",  # Bartlett (East Hazel Crest)
-    "60455": "B",  # Bedford Park
-    "60458": "H",  # Bedford Park (Elk Grove Village)
-    "60459": "I",  # Bedford Park (Elmwood Park)
-    "60499": "L",  # Bedford Park (Evanston)
-    "60501": "A",  # Bedford Park (Evanston)
-    "60638": "F",  # Bedford Park (Evanston)
-    "60104": "F",  # Bellwood
-    "60163": "C",  # Berkeley (Evergreen Park)
-    "60402": "H",  # Berwyn
-    "60406": "A",  # Blue Island
-    "60455": "B",  # Bridgeview
-    "60153": "E",  # Broadview
-    "60155": "D",  # Broadview (Forest View)
-    "60513": "F",  # Brookfield
-    "60089": "X",  # Buffalo Grove
-    "60459": "I",  # Burbank
-    "60633": "D",  # Burnham (Glenview)
-    "60527": "U",  # Burr Ridge
-    "60409": "D",  # Calumet City (Golf)
-    "60643": "H",  # Calumet Park
-    "60827": "C",  # Calumet Park (Harvey)
-    "60411": "C",  # Chicago Heights (Harvey)
-    "60412": "L",  # Chicago Heights
-    "60415": "D",  # Chicago Ridge
-    "60478": "T",  # Country Club Hills
-    "60525": "J",  # Countryside (Hickory Hills)
-    "60418": "I",  # Crestwood
-    "60445": "E",  # Crestwood (Hillside)
-
-    # Page 1 continued
-    "60010": "Z",  # Deer Park
-    "60501": "A",  # Deer Park
-    "60004": "T",  # Deerfield
-    "60015": "Z",  # Des Plaines
-    "60016": "N",  # Des Plaines
-    "60017": "L",  # Des Plaines
-    "60018": "E",  # Des Plaines
-    "60406": "A",  # Dixmoor
-    "60426": "C",  # Dixmoor (Hometown)
-    "60419": "Q",  # Dolton (Homewood)
-    "60429": "P",  # Dolton (Homewood)
-    "60007": "P",  # Indian Head Park (Elk Grove Village)
-    "60009": "L",  # Inverness
-    "60707": "I",  # Inverness
-    "60201": "X",  # Evanston (Justice)
-    "60202": "T",  # Evanston (Kenilworth)
-    "60203": "Y",  # Evanston (La Grange)
-    "60204": "L",  # Evanston (LaGrange)
-    "60805": "J",  # LaGrange Highlands
-    "60422": "Z",  # La Grange Park (Flossmoor)
-    "60411": "C",  # Lansing
-    "60130": "I",  # Lemont
-    "60402": "H",  # Lincolnwood
-    "60638": "F",  # Lincolnwood
-    "60712": "Z",  # Lincolnwood (Palatine)
-    "60411": "C",  # Lynwood (Palatine)
-    "60131": "B",  # Lynwood (Franklin Park)
-    "60022": "Y",  # Lyons (Glencoe)
-    "60025": "R",  # Markham
-    "60026": "X",  # Markham (Glenview)
-    "60425": "U",  # Matteson
-    "60029": "U",  # McCook
-    "60133": "P",  # Melrose Park
-    "60426": "C",  # Melrose Park (Harvey)
-    "60428": "R",  # Melrose Park
-    "60656": "M",  # Melrose Park
-    "60706": "G",  # Melrose Park
-    "60429": "P",  # Merrionette Park (Hazel Crest)
-    "60457": "C",  # Merrionette Park
-    "60162": "N",  # Midlothian
-    "60163": "C",  # Morton Grove
-
-    # Page 1 continued - right columns
-    "60141": "A",  # Hines
-    "60525": "J",  # Hodgkins
-    "60010": "Z",  # Hoffman Estates
-    "60067": "S",  # Hoffman Estates (Norridge)
-    "60169": "Q",  # Hoffman Estates (North Riverside)
-    "60192": "Z",  # Hoffman Estates (Northbrook)
-    "60195": "S",  # Hoffman Estates (Northbrook)
-    "60456": "K",  # Hometown (Northfield)
-    "60422": "Z",  # Homewood (Northlake)
-    "60430": "K",  # Homewood (Oak Forest)
-    "60525": "J",  # Oak Lawn
-    "60453": "H",  # Oak Lawn
-    "60454": "L",  # Oak Lawn (Schiller Park)
-    "60455": "B",  # Oak Lawn (Skokie)
-    "60456": "K",  # Oak Lawn (Skokie)
-    "60457": "C",  # Oak Lawn (South Barrington)
-    "60458": "H",  # Oak Lawn (South Chgo Hts)
-    "60459": "I",  # Oak Lawn (South Holland)
-    "60461": "Z",  # Olympia Fields
-    "60477": "M",  # Orland Hills
-    "60487": "K",  # Orland Hills (Stickney)
-    "60438": "F",  # Orland Hills (Lansing)
-    "60439": "J",  # Orland Park
-    "60462": "N",  # Orland Park
-    "60467": "V",  # Orland Park (Streamwood)
-    "60067": "S",  # Palatine
-    "60074": "N",  # Palatine
-    "60078": "L",  # Palatine (Tinley Park)
-    "60463": "U",  # Palos Heights (Tinley Park)
-    "60428": "R",  # Palos Hills
-    "60465": "G",  # Palos Hills (Tinley Park)
-    "60464": "Y",  # Palos Park
-    "60068": "Q",  # Park Ridge
-    "60426": "C",  # Phoenix (Westchester)
-    "60161": "L",  # Posen
-    "60163": "C",  # Prospect Heights
-    "60164": "B",  # Richton Park
-    "60471": "I",  # Richton Park
-    "60165": "F",  # River Forest (Melrose Park)
-    "60655": "I",  # River Grove (Merrionette Park)
-    "60803": "C",  # Riverdale (Merrionette Park)
-    "60827": "C",  # Riverdale
-    "60546": "H",  # Riverside
-    "60472": "G",  # Robbins
-
-    # Page 1 - far right columns
-    "60056": "O",  # Mount Prospect
-    "60714": "I",  # Niles
-    "60656": "M",  # Norridge
-    "60706": "G",  # Norridge
-    "60546": "H",  # North Riverside
-    "60062": "W",  # Northbrook
-    "60065": "L",  # Northbrook
-    "60093": "Y",  # Northfield
-    "60164": "B",  # Northlake
-    "60452": "G",  # Oak Forest
-    "60453": "H",  # Schiller Park
-    "60454": "L",  # Schiller Park
-    "60455": "B",  # Skokie
-    "60456": "K",  # Skokie
-    "60457": "C",  # South Barrington
-    "60458": "H",  # South Chgo Hts
-    "60459": "I",  # South Holland
-    "60461": "Z",  # Steger
-    "60402": "H",  # Stickney
-    "60487": "K",  # Stickney
-    "60638": "F",  # Stickney
-    "60165": "F",  # Stone Park
-    "60107": "X",  # Streamwood
-    "60501": "A",  # Summit
-    "60476": "F",  # Thornton
-    "60477": "M",  # Tinley Park
-    "60478": "T",  # Tinley Park
-    "60487": "K",  # Tinley Park
-    "60466": "N",  # University Park
-    "60484": "N",  # University Park
-    "60154": "T",  # Westchester
-    "60558": "Z",  # Western Springs
-    "60469": "I",  # Posen
-    "60070": "J",  # Prospect Heights (Wheeling)
-    "60471": "I",  # Richton Park
-    "60480": "M",  # Willow Springs
-    "60305": "N",  # River Forest (Wilmette)
-    "60171": "G",  # River Grove
-    "60827": "C",  # Riverdale
-    "60093": "Y",  # Winnetka
-    "60482": "E",  # Worth
-
-    # Page 2 - Additional ZIP to Range mappings
-    "60004": "T",
-    "60005": "O",
-    "60006": "L",
-    "60007": "P",
-    "60008": "Q",
-    "60009": "L",
-    "60010": "Z",
-    "60011": "M",
-    "60015": "Z",
-    "60016": "N",
-    "60017": "L",
-    "60018": "E",
-    "60022": "Y",
-    "60025": "R",
-    "60026": "X",
-    "60029": "U",
-    "60043": "Z",
-    "60053": "Z",
-    "60056": "O",
-    "60062": "W",
-    "60065": "L",
-    "60067": "S",
-    "60068": "Q",
-    "60070": "J",
-    "60074": "N",
-    "60076": "P",
-    "60077": "N",
-    "60078": "L",
-    "60089": "X",
-    "60090": "P",
-    "60091": "Z",
-    "60093": "Y",
-    "60103": "W",
-    "60104": "F",
-    "60107": "X",
-    "60120": "G",
-    "60126": "V",
-    "60130": "I",
-    "60131": "B",
-    "60133": "P",
-    "60141": "A",
-    "60153": "E",
-    "60154": "T",
-    "60155": "D",
-    "60159": "L",
-    "60160": "F",
-    "60161": "L",
-    "60162": "N",
-    "60163": "C",
-    "60164": "B",
-    "60165": "F",
-    "60168": "L",
-    "60169": "Q",
-    "60171": "G",
-    "60172": "S",
-    "60173": "W",
-    "60176": "G",
-    "60192": "Z",
-    "60193": "U",
-    "60194": "V",
-    "60195": "S",
-    "60201": "X",
-    "60202": "T",
-    "60203": "Y",
-    "60204": "L",
-    "60301": "N", # Added for Oak Park area
-    "60302": "N",
-    "60304": "N",
-    "60305": "N",
-    "60402": "H",
-    "60406": "A",
-    "60409": "D",
-    "60411": "C",
-    "60412": "L",
-    "60415": "D",
-    "60418": "I",
-    "60419": "Q",
-    "60422": "Z",
-    "60423": "O",
-    "60425": "U",
-    "60426": "C",
-    "60428": "R",
-    "60429": "P",
-    "60430": "K",
-    "60438": "F",
-    "60439": "J",
-    "60443": "Q",
-    "60445": "E",
-    "60452": "G",
-    "60453": "H",
-    "60454": "L",
-    "60455": "B",
-    "60456": "K",
-    "60457": "C",
-    "60458": "H",
-    "60459": "I",
-    "60461": "Z",
-    "60462": "N",
-    "60463": "U",
-    "60464": "Y",
-    "60465": "G",
-    "60466": "N",
-    "60467": "V",
-    "60469": "I",
-    "60471": "I",
-    "60472": "G",
-    "60473": "V",
-    "60475": "A",
-    "60476": "F",
-    "60477": "M",
-    "60478": "T",
-    "60480": "M",
-    "60482": "E",
-    "60484": "N",
-    "60487": "K",
-    "60501": "A",
-    "60513": "F",
-    "60521": "Z",
-    "60525": "J",
-    "60526": "K",
-    "60527": "U",
-    "60534": "D",
-    "60546": "H",
-    "60558": "Z",
-    "60601": "J", # Chicago downtown
-    "60602": "J",
-    "60603": "J",
-    "60604": "J",
-    "60605": "J",
-    "60606": "J",
-    "60607": "J",
-    "60608": "H",
-    "60609": "F",
-    "60610": "Z",
-    "60611": "Z",
-    "60612": "L",
-    "60613": "H",
-    "60614": "Z",
-    "60615": "D",
-    "60616": "G",
-    "60617": "B",
-    "60618": "L",
-    "60619": "C",
-    "60620": "D",
-    "60621": "B",
-    "60622": "N",
-    "60623": "F",
-    "60624": "D",
-    "60625": "L",
-    "60626": "K",
-    "60628": "C",
-    "60629": "F",
-    "60630": "K",
-    "60631": "M",
-    "60632": "F",
-    "60633": "D",
-    "60634": "L",
-    "60636": "D",
-    "60637": "E",
-    "60638": "F",
-    "60639": "H",
-    "60640": "M",
-    "60641": "L",
-    "60642": "N",
-    "60643": "H",
-    "60644": "E",
-    "60645": "M",
-    "60646": "L",
-    "60647": "M",
-    "60649": "C",
-    "60651": "F",
-    "60652": "G",
-    "60653": "D",
-    "60654": "N",
-    "60655": "I",
-    "60656": "M",
-    "60657": "Q",
-    "60659": "K",
-    "60660": "L",
+COOK_ZIP_TO_RANGE = {
+    "60803": "C", "60501": "A", "60004": "T", "60005": "O", "60006": "L",
+    "60010": "Z", "60011": "M", "60103": "W", "60133": "P", "60455": "B",
+    "60458": "H", "60459": "I", "60499": "L", "60638": "F", "60104": "F",
+    "60163": "C", "60402": "H", "60406": "A", "60153": "E", "60155": "D",
+    "60513": "F", "60089": "X", "60633": "D", "60527": "U", "60409": "D",
+    "60643": "H", "60827": "C", "60411": "C", "60412": "L", "60415": "D",
+    "60478": "T", "60525": "J", "60418": "I", "60445": "E", "60141": "A",
+    "60067": "S", "60169": "Q", "60192": "Z", "60195": "S", "60456": "K",
+    "60422": "Z", "60430": "K", "60453": "H", "60454": "L", "60457": "C",
+    "60461": "Z", "60477": "M", "60487": "K", "60438": "F", "60439": "J",
+    "60462": "N", "60467": "V", "60074": "N", "60078": "L", "60463": "U",
+    "60428": "R", "60465": "G", "60464": "Y", "60068": "Q", "60426": "C",
+    "60161": "L", "60164": "B", "60471": "I", "60165": "F", "60655": "I",
+    "60546": "H", "60472": "G", "60056": "O", "60714": "I", "60656": "M",
+    "60706": "G", "60062": "W", "60065": "L", "60093": "Y", "60452": "G",
+    "60107": "X", "60476": "F", "60466": "N", "60484": "N", "60154": "T",
+    "60558": "Z", "60469": "I", "60070": "J", "60480": "M", "60305": "N",
+    "60171": "G", "60482": "E", "60015": "Z", "60016": "N", "60017": "L",
+    "60018": "E", "60007": "P", "60009": "L", "60707": "I", "60201": "X",
+    "60202": "T", "60203": "Y", "60204": "L", "60805": "J", "60130": "I",
+    "60712": "Z", "60131": "B", "60022": "Y", "60025": "R", "60026": "X",
+    "60425": "U", "60029": "U", "60429": "P", "60162": "N", "60008": "Q",
+    "60043": "Z", "60053": "Z", "60076": "P", "60077": "N", "60090": "P",
+    "60091": "Z", "60120": "G", "60126": "V", "60159": "L", "60160": "F",
+    "60168": "L", "60172": "S", "60173": "W", "60176": "G", "60193": "U",
+    "60194": "V", "60301": "N", "60302": "N", "60304": "N", "60419": "Q",
+    "60423": "O", "60443": "Q", "60473": "V", "60475": "A", "60521": "Z",
+    "60526": "K", "60534": "D",
+    # Chicago ZIP codes
+    "60601": "J", "60602": "J", "60603": "J", "60604": "J", "60605": "J",
+    "60606": "J", "60607": "J", "60608": "H", "60609": "F", "60610": "Z",
+    "60611": "Z", "60612": "L", "60613": "H", "60614": "Z", "60615": "D",
+    "60616": "G", "60617": "B", "60618": "L", "60619": "C", "60620": "D",
+    "60621": "B", "60622": "N", "60623": "F", "60624": "D", "60625": "L",
+    "60626": "K", "60628": "C", "60629": "F", "60630": "K", "60631": "M",
+    "60632": "F", "60634": "L", "60636": "D", "60637": "E", "60639": "H",
+    "60640": "M", "60641": "L", "60642": "N", "60644": "E", "60645": "M",
+    "60646": "L", "60647": "M", "60649": "C", "60651": "F", "60652": "G",
+    "60653": "D", "60654": "N", "60657": "Q", "60659": "K", "60660": "L",
     "60661": "L",
-    "60706": "G",
-    "60707": "I",
-    "60712": "Z",
-    "60714": "I",
-    "60803": "C",
-    "60805": "J",
-    "60827": "C",
 }
 
-
-def get_payment_standard(zip_code: str, bedrooms: int) -> int | None:
-    """
-    Get the HACC payment standard for a given ZIP code and bedroom count.
-
-    Args:
-        zip_code: 5-digit ZIP code as string
-        bedrooms: Number of bedrooms (0 for studio, 1-4 for 1BR-4BR)
-
-    Returns:
-        Payment standard amount in dollars, or None if ZIP not found
-    """
-    zip_code = str(zip_code).strip()
-
-    if zip_code not in ZIP_TO_RANGE:
-        return None
-
-    range_letter = ZIP_TO_RANGE[zip_code]
-
-    if range_letter not in RANGE_AMOUNTS:
-        return None
-
-    bedroom_key = "studio" if bedrooms == 0 else f"{bedrooms}br"
-
-    if bedroom_key not in RANGE_AMOUNTS[range_letter]:
-        return None
-
-    return RANGE_AMOUNTS[range_letter][bedroom_key]
-
-
-def get_all_zip_codes() -> list[str]:
-    """Return a sorted list of all ZIP codes with payment standards."""
-    return sorted(ZIP_TO_RANGE.keys())
-
-
-def is_valid_zip(zip_code: str) -> bool:
-    """Check if a ZIP code is in the HACC payment standards."""
-    return str(zip_code).strip() in ZIP_TO_RANGE
-
-
-# Town name to ZIP code mapping (from HACC PDF page 1)
-TOWN_TO_ZIPS = {
+COOK_TOWN_TO_ZIPS = {
     "Alsip": ["60803"],
-    "Argo": ["60501"],
     "Arlington Heights": ["60004", "60005", "60006"],
     "Barrington": ["60010", "60011"],
     "Barrington Hills": ["60010"],
@@ -463,10 +196,16 @@ TOWN_TO_ZIPS = {
     "Burr Ridge": ["60527"],
     "Calumet City": ["60409"],
     "Calumet Park": ["60643", "60827"],
-    "Chicago": ["60601", "60602", "60603", "60604", "60605", "60606", "60607", "60608", "60609", "60610", "60611", "60612", "60613", "60614", "60615", "60616", "60617", "60618", "60619", "60620", "60621", "60622", "60623", "60624", "60625", "60626", "60628", "60629", "60630", "60631", "60632", "60633", "60634", "60636", "60637", "60638", "60639", "60640", "60641", "60642", "60643", "60644", "60645", "60646", "60647", "60649", "60651", "60652", "60653", "60654", "60655", "60656", "60657", "60659", "60660", "60661"],
+    "Chicago": ["60601", "60602", "60603", "60604", "60605", "60606", "60607",
+                "60608", "60609", "60610", "60611", "60612", "60613", "60614",
+                "60615", "60616", "60617", "60618", "60619", "60620", "60621",
+                "60622", "60623", "60624", "60625", "60626", "60628", "60629",
+                "60630", "60631", "60632", "60633", "60634", "60636", "60637",
+                "60638", "60639", "60640", "60641", "60642", "60643", "60644",
+                "60645", "60646", "60647", "60649", "60651", "60652", "60653",
+                "60654", "60655", "60656", "60657", "60659", "60660", "60661"],
     "Chicago Heights": ["60411", "60412"],
     "Chicago Ridge": ["60415"],
-    "Cicero": ["60804"],
     "Country Club Hills": ["60478"],
     "Countryside": ["60525"],
     "Crestwood": ["60418", "60445"],
@@ -526,7 +265,6 @@ TOWN_TO_ZIPS = {
     "Northbrook": ["60062", "60065"],
     "Northfield": ["60093"],
     "Northlake": ["60164"],
-    "Oak Brook": ["60523"],
     "Oak Forest": ["60452"],
     "Oak Lawn": ["60453", "60454", "60455", "60456", "60457", "60458", "60459"],
     "Oak Park": ["60301", "60302", "60304", "60305"],
@@ -575,36 +313,354 @@ TOWN_TO_ZIPS = {
 }
 
 
-def get_all_towns() -> list[str]:
-    """Return a sorted list of all town names."""
-    return sorted(TOWN_TO_ZIPS.keys())
+# =============================================================================
+# DUPAGE COUNTY DATA (Direct ZIP to amounts)
+# =============================================================================
+
+DUPAGE_ZIP_AMOUNTS = {
+    # Format: "ZIP": {"studio": X, "1br": X, "2br": X, "3br": X, "4br": X}
+    "60101": {"studio": 1310, "1br": 1400, "2br": 1580, "3br": 2030, "4br": 2380},  # Addison
+    "60103": {"studio": 1560, "1br": 1670, "2br": 1880, "3br": 2410, "4br": 2840},  # Bartlett
+    "60106": {"studio": 1410, "1br": 1510, "2br": 1700, "3br": 2190, "4br": 2570},  # Bensenville
+    "60108": {"studio": 1560, "1br": 1670, "2br": 1880, "3br": 2410, "4br": 2840},  # Bloomingdale
+    "60116": {"studio": 1760, "1br": 1890, "2br": 2130, "3br": 2740, "4br": 3210},  # Carol Stream
+    "60117": {"studio": 1560, "1br": 1670, "2br": 1880, "3br": 2410, "4br": 2840},  # Bloomingdale
+    "60126": {"studio": 1910, "1br": 2050, "2br": 2310, "3br": 2970, "4br": 3490},  # Elmhurst
+    "60137": {"studio": 1340, "1br": 1430, "2br": 1620, "3br": 2080, "4br": 2440},  # Glen Ellyn
+    "60138": {"studio": 1340, "1br": 1430, "2br": 1620, "3br": 2080, "4br": 2440},  # Glen Ellyn
+    "60139": {"studio": 1560, "1br": 1670, "2br": 1880, "3br": 2410, "4br": 2840},  # Glendale Heights
+    "60143": {"studio": 1610, "1br": 1720, "2br": 1940, "3br": 2490, "4br": 2930},  # Itasca
+    "60148": {"studio": 1780, "1br": 1900, "2br": 2150, "3br": 2760, "4br": 3240},  # Lombard
+    "60157": {"studio": 1780, "1br": 1900, "2br": 2150, "3br": 2760, "4br": 3240},  # Lombard (Medinah)
+    "60181": {"studio": 1910, "1br": 2050, "2br": 2310, "3br": 2970, "4br": 3490},  # Villa Park
+    "60185": {"studio": 1660, "1br": 1780, "2br": 2010, "3br": 2580, "4br": 3030},  # West Chicago
+    "60187": {"studio": 1760, "1br": 1890, "2br": 2130, "3br": 2740, "4br": 3210},  # Wheaton
+    "60188": {"studio": 1560, "1br": 1670, "2br": 1880, "3br": 2410, "4br": 2840},  # Carol Stream
+    "60189": {"studio": 1760, "1br": 1890, "2br": 2130, "3br": 2740, "4br": 3210},  # Wheaton
+    "60190": {"studio": 1760, "1br": 1890, "2br": 2130, "3br": 2740, "4br": 3210},  # Winfield
+    "60191": {"studio": 1610, "1br": 1720, "2br": 1940, "3br": 2490, "4br": 2930},  # Wood Dale
+    "60199": {"studio": 1760, "1br": 1890, "2br": 2130, "3br": 2740, "4br": 3210},  # Carol Stream
+    "60502": {"studio": 1980, "1br": 2120, "2br": 2390, "3br": 3070, "4br": 3610},  # Aurora
+    "60504": {"studio": 2145, "1br": 2310, "2br": 2640, "3br": 3366, "4br": 3971},  # Aurora
+    "60514": {"studio": 1860, "1br": 1990, "2br": 2250, "3br": 2890, "4br": 3390},  # Clarendon Hills
+    "60515": {"studio": 1710, "1br": 1830, "2br": 2070, "3br": 2660, "4br": 3120},  # Downers Grove
+    "60516": {"studio": 1710, "1br": 1830, "2br": 2070, "3br": 2660, "4br": 3120},  # Downers Grove
+    "60517": {"studio": 1710, "1br": 1830, "2br": 2070, "3br": 2660, "4br": 3120},  # Woodridge
+    "60519": {"studio": 1710, "1br": 1830, "2br": 2070, "3br": 2660, "4br": 3120},  # Eola
+    "60521": {"studio": 2060, "1br": 2210, "2br": 2490, "3br": 3200, "4br": 3760},  # Hinsdale
+    "60523": {"studio": 2270, "1br": 2430, "2br": 2740, "3br": 3520, "4br": 4130},  # Oak Brook
+    "60527": {"studio": 1960, "1br": 2100, "2br": 2370, "3br": 3040, "4br": 3570},  # Willowbrook
+    "60532": {"studio": 1760, "1br": 1890, "2br": 2130, "3br": 2740, "4br": 3210},  # Lisle
+    "60540": {"studio": 1860, "1br": 1990, "2br": 2250, "3br": 2890, "4br": 3390},  # Naperville
+    "60555": {"studio": 1760, "1br": 1890, "2br": 2130, "3br": 2740, "4br": 3210},  # Warrenville
+    "60559": {"studio": 1760, "1br": 1890, "2br": 2130, "3br": 2740, "4br": 3210},  # Westmont
+    "60561": {"studio": 1710, "1br": 1830, "2br": 2070, "3br": 2660, "4br": 3120},  # Darien
+    "60563": {"studio": 2000, "1br": 2130, "2br": 2410, "3br": 3100, "4br": 3640},  # Naperville
+    "60565": {"studio": 1860, "1br": 1990, "2br": 2250, "3br": 2890, "4br": 3390},  # Naperville
+}
+
+DUPAGE_TOWN_TO_ZIPS = {
+    "Addison": ["60101"],
+    "Aurora": ["60502", "60504"],
+    "Bartlett": ["60103"],
+    "Bensenville": ["60106"],
+    "Bloomingdale": ["60108", "60117"],
+    "Carol Stream": ["60116", "60188", "60199"],
+    "Clarendon Hills": ["60514"],
+    "Darien": ["60561"],
+    "Downers Grove": ["60515", "60516"],
+    "Elmhurst": ["60126"],
+    "Glen Ellyn": ["60137", "60138"],
+    "Glendale Heights": ["60139"],
+    "Hinsdale": ["60521"],
+    "Itasca": ["60143"],
+    "Lisle": ["60532"],
+    "Lombard": ["60148", "60157"],
+    "Naperville": ["60540", "60563", "60565"],
+    "Oak Brook": ["60523"],
+    "Villa Park": ["60181"],
+    "Warrenville": ["60555"],
+    "West Chicago": ["60185"],
+    "Westmont": ["60559"],
+    "Wheaton": ["60187", "60189"],
+    "Willowbrook": ["60527"],
+    "Winfield": ["60190"],
+    "Wood Dale": ["60191"],
+    "Woodridge": ["60517"],
+}
 
 
-def get_zips_for_town(town: str) -> list[str]:
-    """Get ZIP codes for a town name. Returns empty list if not found."""
-    return TOWN_TO_ZIPS.get(town, [])
+# =============================================================================
+# WILL COUNTY DATA (Direct ZIP to amounts)
+# =============================================================================
+
+WILL_ZIP_AMOUNTS = {
+    # Housing Authority of Joliet - Effective October 2025
+    "60401": {"studio": 1419, "1br": 1518, "2br": 1716, "3br": 2200, "4br": 2552},  # Beecher
+    "60403": {"studio": 1650, "1br": 1771, "2br": 1991, "3br": 2563, "4br": 2970},  # Crest Hill
+    "60404": {"studio": 1881, "1br": 2013, "2br": 2266, "3br": 2915, "4br": 3377},  # Shorewood
+    "60408": {"studio": 1386, "1br": 1485, "2br": 1672, "3br": 2145, "4br": 2486},  # Braidwood
+    "60410": {"studio": 1518, "1br": 1617, "2br": 1826, "3br": 2354, "4br": 2717},  # Channahon
+    "60421": {"studio": 1287, "1br": 1386, "2br": 1562, "3br": 2013, "4br": 2332},  # Elwood
+    "60431": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
+    "60432": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
+    "60433": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
+    "60434": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
+    "60435": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
+    "60436": {"studio": 1518, "1br": 1617, "2br": 1826, "3br": 2354, "4br": 2717},  # Joliet
+    "60440": {"studio": 1881, "1br": 2013, "2br": 2266, "3br": 2915, "4br": 3377},  # Bolingbrook
+    "60441": {"studio": 1782, "1br": 1914, "2br": 2145, "3br": 2761, "4br": 3201},  # Lockport
+    "60442": {"studio": 1617, "1br": 1738, "2br": 1958, "3br": 2519, "4br": 2915},  # Manhattan
+    "60446": {"studio": 2112, "1br": 2255, "2br": 2541, "3br": 3267, "4br": 3784},  # Romeoville
+    "60448": {"studio": 1749, "1br": 1870, "2br": 2101, "3br": 2706, "4br": 3135},  # Mokena
+    "60449": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Monee
+    "60451": {"studio": 1749, "1br": 1870, "2br": 2101, "3br": 2706, "4br": 3135},  # New Lenox
+    "60468": {"studio": 1320, "1br": 1419, "2br": 1595, "3br": 2057, "4br": 2387},  # Peotone
+    "60481": {"studio": 1287, "1br": 1386, "2br": 1562, "3br": 2013, "4br": 2332},  # Wilmington
+    "60490": {"studio": 1881, "1br": 2013, "2br": 2266, "3br": 2915, "4br": 3377},  # Bolingbrook
+    "60491": {"studio": 1650, "1br": 1771, "2br": 1991, "3br": 2563, "4br": 2970},  # Homer Glen
+    "60544": {"studio": 2013, "1br": 2156, "2br": 2431, "3br": 3124, "4br": 3619},  # Plainfield
+    "60564": {"studio": 2013, "1br": 2156, "2br": 2431, "3br": 3124, "4br": 3619},  # Naperville (Will Co portion)
+    "60585": {"studio": 2013, "1br": 2156, "2br": 2431, "3br": 3124, "4br": 3619},  # Plainfield
+    "60586": {"studio": 2013, "1br": 2156, "2br": 2431, "3br": 3124, "4br": 3619},  # Plainfield
+}
+
+WILL_TOWN_TO_ZIPS = {
+    "Beecher": ["60401"],
+    "Bolingbrook": ["60440", "60490"],
+    "Braidwood": ["60408"],
+    "Channahon": ["60410"],
+    "Crest Hill": ["60403"],
+    "Elwood": ["60421"],
+    "Homer Glen": ["60491"],
+    "Joliet": ["60431", "60432", "60433", "60434", "60435", "60436"],
+    "Lockport": ["60441"],
+    "Manhattan": ["60442"],
+    "Mokena": ["60448"],
+    "Monee": ["60449"],
+    "New Lenox": ["60451"],
+    "Peotone": ["60468"],
+    "Plainfield": ["60544", "60585", "60586"],
+    "Romeoville": ["60446"],
+    "Shorewood": ["60404"],
+    "Wilmington": ["60481"],
+}
 
 
-def resolve_location(location: str) -> list[str]:
+# =============================================================================
+# LAKE COUNTY DATA (Direct ZIP to amounts)
+# =============================================================================
+
+LAKE_ZIP_AMOUNTS = {
+    # Lake County Housing Authority - Based on 2025 SAFMRs
+    "60002": {"studio": 1250, "1br": 1340, "2br": 1510, "3br": 1940, "4br": 2280},  # Antioch
+    "60010": {"studio": 2060, "1br": 2210, "2br": 2490, "3br": 3200, "4br": 3760},  # Barrington (Lake Co)
+    "60015": {"studio": 2190, "1br": 2340, "2br": 2640, "3br": 3390, "4br": 3980},  # Deerfield
+    "60020": {"studio": 1380, "1br": 1480, "2br": 1670, "3br": 2140, "4br": 2520},  # Fox Lake
+    "60030": {"studio": 1630, "1br": 1740, "2br": 1970, "3br": 2530, "4br": 2970},  # Grayslake
+    "60031": {"studio": 1630, "1br": 1740, "2br": 1970, "3br": 2530, "4br": 2970},  # Gurnee
+    "60035": {"studio": 2060, "1br": 2210, "2br": 2490, "3br": 3200, "4br": 3760},  # Highland Park
+    "60037": {"studio": 2190, "1br": 2340, "2br": 2640, "3br": 3390, "4br": 3980},  # Fort Sheridan
+    "60040": {"studio": 2060, "1br": 2210, "2br": 2490, "3br": 3200, "4br": 3760},  # Highwood
+    "60041": {"studio": 1500, "1br": 1610, "2br": 1810, "3br": 2330, "4br": 2740},  # Ingleside
+    "60042": {"studio": 1500, "1br": 1610, "2br": 1810, "3br": 2330, "4br": 2740},  # Island Lake
+    "60044": {"studio": 1760, "1br": 1880, "2br": 2120, "3br": 2730, "4br": 3200},  # Lake Bluff
+    "60045": {"studio": 2190, "1br": 2340, "2br": 2640, "3br": 3390, "4br": 3980},  # Lake Forest
+    "60046": {"studio": 1380, "1br": 1480, "2br": 1670, "3br": 2140, "4br": 2520},  # Lake Villa
+    "60047": {"studio": 1970, "1br": 2110, "2br": 2380, "3br": 3060, "4br": 3590},  # Long Grove
+    "60048": {"studio": 1710, "1br": 1830, "2br": 2070, "3br": 2660, "4br": 3120},  # Libertyville
+    "60050": {"studio": 1440, "1br": 1540, "2br": 1740, "3br": 2230, "4br": 2620},  # McHenry (Lake Co)
+    "60060": {"studio": 1660, "1br": 1770, "2br": 2000, "3br": 2570, "4br": 3020},  # Mundelein
+    "60061": {"studio": 1970, "1br": 2110, "2br": 2380, "3br": 3060, "4br": 3590},  # Vernon Hills
+    "60064": {"studio": 1190, "1br": 1280, "2br": 1440, "3br": 1850, "4br": 2170},  # North Chicago
+    "60069": {"studio": 1970, "1br": 2110, "2br": 2380, "3br": 3060, "4br": 3590},  # Lincolnshire
+    "60073": {"studio": 1500, "1br": 1610, "2br": 1810, "3br": 2330, "4br": 2740},  # Round Lake
+    "60074": {"studio": 1630, "1br": 1740, "2br": 1970, "3br": 2530, "4br": 2970},  # Palatine (Lake Co)
+    "60083": {"studio": 1380, "1br": 1480, "2br": 1670, "3br": 2140, "4br": 2520},  # Wadsworth
+    "60084": {"studio": 1630, "1br": 1740, "2br": 1970, "3br": 2530, "4br": 2970},  # Wauconda
+    "60085": {"studio": 1260, "1br": 1350, "2br": 1520, "3br": 1950, "4br": 2290},  # Waukegan
+    "60087": {"studio": 1330, "1br": 1430, "2br": 1610, "3br": 2070, "4br": 2430},  # Waukegan
+    "60088": {"studio": 1190, "1br": 1280, "2br": 1440, "3br": 1850, "4br": 2170},  # Great Lakes
+    "60089": {"studio": 1970, "1br": 2110, "2br": 2380, "3br": 3060, "4br": 3590},  # Buffalo Grove
+    "60096": {"studio": 1380, "1br": 1480, "2br": 1670, "3br": 2140, "4br": 2520},  # Winthrop Harbor
+    "60099": {"studio": 1320, "1br": 1410, "2br": 1590, "3br": 2050, "4br": 2400},  # Zion
+}
+
+LAKE_TOWN_TO_ZIPS = {
+    "Antioch": ["60002"],
+    "Barrington": ["60010"],
+    "Buffalo Grove": ["60089"],
+    "Deerfield": ["60015"],
+    "Fort Sheridan": ["60037"],
+    "Fox Lake": ["60020"],
+    "Grayslake": ["60030"],
+    "Great Lakes": ["60088"],
+    "Gurnee": ["60031"],
+    "Highland Park": ["60035"],
+    "Highwood": ["60040"],
+    "Ingleside": ["60041"],
+    "Island Lake": ["60042"],
+    "Lake Bluff": ["60044"],
+    "Lake Forest": ["60045"],
+    "Lake Villa": ["60046"],
+    "Libertyville": ["60048"],
+    "Lincolnshire": ["60069"],
+    "Long Grove": ["60047"],
+    "Mundelein": ["60060"],
+    "North Chicago": ["60064"],
+    "Round Lake": ["60073"],
+    "Vernon Hills": ["60061"],
+    "Wadsworth": ["60083"],
+    "Wauconda": ["60084"],
+    "Waukegan": ["60085", "60087"],
+    "Winthrop Harbor": ["60096"],
+    "Zion": ["60099"],
+}
+
+
+# =============================================================================
+# LOOKUP FUNCTIONS
+# =============================================================================
+
+def get_county_info(county_key: str) -> dict | None:
+    """Get county metadata by key (cook, dupage, will, lake)."""
+    return COUNTIES.get(county_key.lower())
+
+
+def get_all_counties() -> list[dict]:
+    """Return list of all counties with their info."""
+    return [{"key": k, **v} for k, v in COUNTIES.items()]
+
+
+def get_payment_standard(county_key: str, zip_code: str, bedrooms: int) -> int | None:
+    """
+    Get the payment standard for a given county, ZIP code, and bedroom count.
+
+    Args:
+        county_key: County identifier (cook, dupage, will, lake)
+        zip_code: 5-digit ZIP code as string
+        bedrooms: Number of bedrooms (0 for studio, 1-4 for 1BR-4BR)
+
+    Returns:
+        Payment standard amount in dollars, or None if not found
+    """
+    county_key = county_key.lower()
+    zip_code = str(zip_code).strip()
+    bedroom_key = "studio" if bedrooms == 0 else f"{bedrooms}br"
+
+    if county_key == "cook":
+        if zip_code not in COOK_ZIP_TO_RANGE:
+            return None
+        range_letter = COOK_ZIP_TO_RANGE[zip_code]
+        if range_letter not in COOK_RANGE_AMOUNTS:
+            return None
+        return COOK_RANGE_AMOUNTS[range_letter].get(bedroom_key)
+
+    elif county_key == "dupage":
+        if zip_code not in DUPAGE_ZIP_AMOUNTS:
+            return None
+        return DUPAGE_ZIP_AMOUNTS[zip_code].get(bedroom_key)
+
+    elif county_key == "will":
+        if zip_code not in WILL_ZIP_AMOUNTS:
+            return None
+        return WILL_ZIP_AMOUNTS[zip_code].get(bedroom_key)
+
+    elif county_key == "lake":
+        if zip_code not in LAKE_ZIP_AMOUNTS:
+            return None
+        return LAKE_ZIP_AMOUNTS[zip_code].get(bedroom_key)
+
+    return None
+
+
+def get_all_zip_codes(county_key: str) -> list[str]:
+    """Return a sorted list of all ZIP codes for a county."""
+    county_key = county_key.lower()
+
+    if county_key == "cook":
+        return sorted(COOK_ZIP_TO_RANGE.keys())
+    elif county_key == "dupage":
+        return sorted(DUPAGE_ZIP_AMOUNTS.keys())
+    elif county_key == "will":
+        return sorted(WILL_ZIP_AMOUNTS.keys())
+    elif county_key == "lake":
+        return sorted(LAKE_ZIP_AMOUNTS.keys())
+
+    return []
+
+
+def is_valid_zip(county_key: str, zip_code: str) -> bool:
+    """Check if a ZIP code is valid for a county."""
+    return str(zip_code).strip() in get_all_zip_codes(county_key)
+
+
+def get_all_towns(county_key: str) -> list[str]:
+    """Return a sorted list of all town names for a county."""
+    county_key = county_key.lower()
+
+    if county_key == "cook":
+        return sorted(COOK_TOWN_TO_ZIPS.keys())
+    elif county_key == "dupage":
+        return sorted(DUPAGE_TOWN_TO_ZIPS.keys())
+    elif county_key == "will":
+        return sorted(WILL_TOWN_TO_ZIPS.keys())
+    elif county_key == "lake":
+        return sorted(LAKE_TOWN_TO_ZIPS.keys())
+
+    return []
+
+
+def get_zips_for_town(county_key: str, town: str) -> list[str]:
+    """Get ZIP codes for a town in a county."""
+    county_key = county_key.lower()
+
+    if county_key == "cook":
+        return COOK_TOWN_TO_ZIPS.get(town, [])
+    elif county_key == "dupage":
+        return DUPAGE_TOWN_TO_ZIPS.get(town, [])
+    elif county_key == "will":
+        return WILL_TOWN_TO_ZIPS.get(town, [])
+    elif county_key == "lake":
+        return LAKE_TOWN_TO_ZIPS.get(town, [])
+
+    return []
+
+
+def resolve_location(county_key: str, location: str) -> list[str]:
     """
     Convert a location (town name or ZIP code) to a list of ZIP codes.
 
     Args:
+        county_key: County identifier
         location: Either a town name or a ZIP code
 
     Returns:
         List of ZIP codes
     """
+    county_key = county_key.lower()
     location = location.strip()
 
     # Check if it's a ZIP code (5 digits)
     if len(location) == 5 and location.isdigit():
-        if is_valid_zip(location):
+        if is_valid_zip(county_key, location):
             return [location]
         return []
 
+    # Get the appropriate town mapping
+    if county_key == "cook":
+        town_map = COOK_TOWN_TO_ZIPS
+    elif county_key == "dupage":
+        town_map = DUPAGE_TOWN_TO_ZIPS
+    elif county_key == "will":
+        town_map = WILL_TOWN_TO_ZIPS
+    elif county_key == "lake":
+        town_map = LAKE_TOWN_TO_ZIPS
+    else:
+        return []
+
     # Try to match as town name (case-insensitive)
-    for town, zips in TOWN_TO_ZIPS.items():
+    for town, zips in town_map.items():
         if town.lower() == location.lower():
             return zips
 
