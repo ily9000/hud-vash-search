@@ -54,12 +54,8 @@ for i, county in enumerate(counties):
             st.markdown(f"📍 {num_towns} towns | 📮 {num_zips} ZIP codes")
 
             # Link to county page
-            st.page_link(
-                f"pages/{county['url_slug']}.py",
-                label=f"Search {county['name']}",
-                icon="🔍",
-                use_container_width=True
-            )
+            if st.button(f"🔍 Search {county['name']}", key=f"btn_{county['key']}", use_container_width=True):
+                st.switch_page(f"pages/{county['url_slug']}.py")
 
 st.markdown("---")
 
