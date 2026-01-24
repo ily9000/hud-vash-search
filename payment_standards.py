@@ -527,9 +527,9 @@ def get_county_info(county_key: str) -> dict | None:
     return COUNTIES.get(county_key.lower())
 
 
-def get_all_counties() -> list[str]:
+def get_all_counties() -> list[dict]:
     """Return a list of all counties with payment standards."""
-    return ["Cook County"]
+    return [{"key": key, **info} for key, info in COUNTIES.items()]
 
 
 def get_zips_for_town(town: str) -> list[str]:
