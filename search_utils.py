@@ -180,19 +180,20 @@ def render_county_page(county_key: str):
 
         st.markdown("---")
 
-        # Town selector with better guidance
-        all_towns = get_all_towns(county_key)
+        # Location selection - two-step process made clear
+        st.markdown("**📍 Location**")
 
-        st.markdown("**📍 Where to Search**")
+        # Step 1: Select towns
+        all_towns = get_all_towns(county_key)
+        st.caption("Step 1: Pick towns")
         selected_towns = st.multiselect(
             "Select Towns",
             options=all_towns,
             placeholder="Start typing a town name...",
-            help="Select one or more towns. Each town may cover multiple ZIP codes.",
             label_visibility="collapsed"
         )
 
-        # Resolve and display ZIP codes for selected towns
+        # Resolve ZIP codes for selected towns
         resolved_zips = []
         if selected_towns:
             for town in selected_towns:
@@ -200,19 +201,20 @@ def render_county_page(county_key: str):
                 if town_zips:
                     resolved_zips.extend(town_zips)
             resolved_zips = list(dict.fromkeys(resolved_zips))  # Remove duplicates
+            st.caption(f"→ {len(resolved_zips)} ZIP codes found")
 
-        # Pre-fill ZIP codes field with resolved ZIPs
+        # Step 2: Review/edit ZIP codes
         default_zips = ", ".join(resolved_zips) if resolved_zips else ""
 
+        st.caption("Step 2: Review ZIP codes")
         extra_zips = st.text_input(
-            "ZIP Codes",
+            "ZIP Codes to search",
             value=default_zips,
-            placeholder="60601, 60602",
-            help="Auto-filled from town selection. You can add or remove ZIP codes.",
-            label_visibility="visible"
+            placeholder="Or enter ZIPs directly: 60601, 60602",
+            label_visibility="collapsed"
         )
 
-        location_input = extra_zips  # Now just use the ZIP codes directly
+        location_input = extra_zips
 
         st.markdown("")
         search_clicked = st.button("🔍 Search Rentals", type="primary", use_container_width=True)
