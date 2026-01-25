@@ -192,16 +192,27 @@ def render_county_page(county_key: str):
             label_visibility="collapsed"
         )
 
+        # Resolve and display ZIP codes for selected towns
+        resolved_zips = []
+        if selected_towns:
+            for town in selected_towns:
+                town_zips = resolve_location(county_key, town)
+                if town_zips:
+                    resolved_zips.extend(town_zips)
+            resolved_zips = list(dict.fromkeys(resolved_zips))  # Remove duplicates
+
+        # Pre-fill ZIP codes field with resolved ZIPs
+        default_zips = ", ".join(resolved_zips) if resolved_zips else ""
+
         extra_zips = st.text_input(
-            "Or Enter ZIP Codes",
+            "ZIP Codes",
+            value=default_zips,
             placeholder="60601, 60602",
-            help="Add specific ZIP codes separated by commas",
+            help="Auto-filled from town selection. You can add or remove ZIP codes.",
             label_visibility="visible"
         )
 
-        location_input = ", ".join(selected_towns)
-        if extra_zips:
-            location_input = f"{location_input}, {extra_zips}" if location_input else extra_zips
+        location_input = extra_zips  # Now just use the ZIP codes directly
 
         st.markdown("")
         search_clicked = st.button("🔍 Search Rentals", type="primary", use_container_width=True)
@@ -369,10 +380,6 @@ def render_county_page(county_key: str):
                                     google_query = urllib.parse.quote(f"{address} rental")
                                     google_url = f"https://www.google.com/search?q={google_query}"
                                     st.link_button("🔗 View on Google", google_url, use_container_width=True)
-                                    # Add a maps link too
-                                    maps_query = urllib.parse.quote(address)
-                                    maps_url = f"https://www.google.com/maps/search/?api=1&query={maps_query}"
-                                    st.link_button("🗺️ Open in Maps", maps_url, use_container_width=True)
 
                     else:
                         st.markdown("""
