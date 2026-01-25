@@ -14,7 +14,7 @@ COUNTIES = {
         "effective_date": "January 1, 2026",
         "url_slug": "Cook-County",
         "type": "range",  # Uses A-Z range letter system
-        "payment_standards_url": "https://thehacc.org/hcv-payment-standards/",
+        "payment_standards_url": "https://thehacc.org/app/uploads/2025/11/Payment-Standard-Eff-1-2026.pdf",
         "explainer": """
 ## How Cook County Payment Standards Work
 
@@ -39,7 +39,7 @@ of $2,245/month, while the same voucher in ZIP 60406 (Range A) is $1,145/month.
         "effective_date": "January 1, 2025",
         "url_slug": "DuPage-County",
         "type": "direct",  # Direct ZIP to amounts
-        "payment_standards_url": "https://dupagehousing.org/housing-choice-voucher-hcv/",
+        "payment_standards_url": "https://www.dupagehousing.org/dupage-payment-standards",
         "explainer": """
 ## How DuPage County Payment Standards Work
 
@@ -62,7 +62,7 @@ while in Addison (60101) it's $1,580/month.
         "effective_date": "October 1, 2025",
         "url_slug": "Will-County",
         "type": "direct",
-        "payment_standards_url": "https://www.hajoliet.org/housing-choice-voucher-program",
+        "payment_standards_url": "https://www.hajoliet.org/sites/default/files/file-attachements/2026_haj_payment_standards.10-2025.pdf",
         "explainer": """
 ## How Will County Payment Standards Work
 
@@ -84,7 +84,7 @@ while in Joliet (60435) it's $1,793/month.
         "effective_date": "January 1, 2025",
         "url_slug": "Lake-County",
         "type": "direct",
-        "payment_standards_url": "https://www.lakecountyha.org/housing/housing-choice-voucher-section-8/",
+        "payment_standards_url": "https://www.lakecountyha.org/plugins/show_image.php?id=1662",
         "explainer": """
 ## How Lake County Payment Standards Work
 
