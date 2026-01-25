@@ -116,8 +116,8 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("### 📍 Select Your County")
-st.markdown("*Choose where your client wants to live. Each county has its own Housing Authority with different rent limits.*")
+st.markdown("### Step 1: Select Your County")
+st.markdown("Each county has its own Housing Authority with different rent limits. Pick where your client wants to live.")
 
 # Get all counties
 counties = get_all_counties()
@@ -129,43 +129,34 @@ for i, county in enumerate(counties):
     with cols[i % 2]:
         with st.container(border=True):
             st.subheader(county['name'])
-            st.markdown(f"🏛️ **{county['authority']}**")
+            st.caption(county['authority'])
 
             # Stats with clearer labels
             num_towns = len(get_all_towns(county['key']))
             num_zips = len(get_all_zip_codes(county['key']))
-            st.markdown(f"📍 **{num_towns}** searchable towns  •  📮 **{num_zips}** ZIP codes")
-            st.caption(f"Payment standards updated: {county['effective_date']}")
+            st.markdown(f"**{num_towns}** towns  •  **{num_zips}** ZIP codes")
+            st.caption(f"Standards updated: {county['effective_date']}")
 
             # Link to county page
-            if st.button(f"Search {county['name']} Rentals", key=f"btn_{county['key']}", type="primary", use_container_width=True):
+            if st.button(f"Search {county['name']}", key=f"btn_{county['key']}", type="primary", use_container_width=True):
                 st.switch_page(f"pages/{county['url_slug']}.py")
 
 st.markdown("---")
 
-# How it works - with better visual design
-st.markdown("### 🔄 How It Works")
-st.markdown("*Three simple steps to find housing for your client*")
+# What happens next
+st.markdown("### What Happens Next")
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
     with st.container(border=True):
-        st.markdown("#### Step 1")
-        st.markdown("**Pick the County**")
-        st.markdown("Select the area where your veteran client wants to live. Payment limits vary by location.")
+        st.markdown("#### Step 2: Enter Search Details")
+        st.markdown("Choose the voucher bedroom size and select towns or ZIP codes to search.")
 
 with col2:
     with st.container(border=True):
-        st.markdown("#### Step 2")
-        st.markdown("**Enter Search Details**")
-        st.markdown("Choose the voucher bedroom size and select specific towns or ZIP codes to search.")
-
-with col3:
-    with st.container(border=True):
-        st.markdown("#### Step 3")
-        st.markdown("**Review Affordable Listings**")
-        st.markdown("See only rentals your client can afford. Click to view on Google and contact landlords.")
+        st.markdown("#### Step 3: Review Listings")
+        st.markdown("See only rentals your client can afford. Click to view details and contact landlords.")
 
 st.markdown("---")
 
