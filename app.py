@@ -21,19 +21,103 @@ st.set_page_config(
     layout="wide"
 )
 
-# Title
-st.title("HUD-VASH Rental Search")
-st.markdown("**Illinois** - Find affordable rentals within Housing Authority payment standards")
-
-st.markdown("---")
-
-# Introduction
+# Custom CSS for better styling
 st.markdown("""
-This tool helps HUD-VASH case managers find rental listings that fall within
-Housing Authority payment standards. Select your county below to begin searching.
-""")
+<style>
+    /* Main header styling */
+    .main-header {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+        padding: 2rem;
+        border-radius: 10px;
+        color: white;
+        margin-bottom: 1.5rem;
+    }
+    .main-header h1 {
+        color: white !important;
+        margin-bottom: 0.5rem;
+    }
 
-st.markdown("### Select Your County")
+    /* Info boxes */
+    .info-box {
+        background-color: #f0f7ff;
+        border-left: 4px solid #1e3a5f;
+        padding: 1rem;
+        border-radius: 0 8px 8px 0;
+        margin: 1rem 0;
+    }
+
+    /* Step cards */
+    .step-card {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        height: 100%;
+    }
+    .step-number {
+        background: #1e3a5f;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    /* Glossary terms */
+    .glossary-term {
+        background: #fff8e6;
+        border-left: 3px solid #ffc107;
+        padding: 0.75rem 1rem;
+        margin: 0.5rem 0;
+        border-radius: 0 5px 5px 0;
+    }
+    .glossary-term strong {
+        color: #1e3a5f;
+    }
+
+    /* Better button styling */
+    .stButton > button {
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    /* County card improvements */
+    div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] {
+        border-radius: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Header section
+st.markdown("""
+<div class="main-header">
+    <h1>🏠 HUD-VASH Rental Search</h1>
+    <p style="font-size: 1.2rem; margin: 0;">Find affordable housing for veterans in Illinois</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Welcome message with plain language
+st.markdown("""
+<div class="info-box">
+    <strong>👋 Welcome, Case Managers!</strong><br>
+    This tool helps you quickly find rental listings that your veteran clients can afford
+    with their housing voucher. No more manual searching across multiple websites or
+    calculating payment standards by hand.
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("### 📍 Select Your County")
+st.markdown("*Choose where your client wants to live. Each county has its own Housing Authority with different rent limits.*")
 
 # Get all counties
 counties = get_all_counties()
@@ -45,56 +129,119 @@ for i, county in enumerate(counties):
     with cols[i % 2]:
         with st.container(border=True):
             st.subheader(county['name'])
-            st.markdown(f"**{county['authority']}**")
-            st.caption(f"Effective: {county['effective_date']}")
+            st.markdown(f"🏛️ **{county['authority']}**")
 
-            # Stats
+            # Stats with clearer labels
             num_towns = len(get_all_towns(county['key']))
             num_zips = len(get_all_zip_codes(county['key']))
-            st.markdown(f"📍 {num_towns} towns | 📮 {num_zips} ZIP codes")
+            st.markdown(f"📍 **{num_towns}** searchable towns  •  📮 **{num_zips}** ZIP codes")
+            st.caption(f"Payment standards updated: {county['effective_date']}")
 
             # Link to county page
-            if st.button(f"🔍 Search {county['name']}", key=f"btn_{county['key']}", use_container_width=True):
+            if st.button(f"Search {county['name']} Rentals", key=f"btn_{county['key']}", type="primary", use_container_width=True):
                 st.switch_page(f"pages/{county['url_slug']}.py")
 
 st.markdown("---")
 
-# How it works
-st.markdown("### How It Works")
+# How it works - with better visual design
+st.markdown("### 🔄 How It Works")
+st.markdown("*Three simple steps to find housing for your client*")
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown("**1. Select County**")
-    st.markdown("Choose the county where your client wants to live. Each county has different payment standards.")
+    with st.container(border=True):
+        st.markdown("#### Step 1")
+        st.markdown("**Pick the County**")
+        st.markdown("Select the area where your veteran client wants to live. Payment limits vary by location.")
 
 with col2:
-    st.markdown("**2. Search Listings**")
-    st.markdown("Select town or ZIP code and bedroom size. The tool searches for rentals within payment standards.")
+    with st.container(border=True):
+        st.markdown("#### Step 2")
+        st.markdown("**Enter Search Details**")
+        st.markdown("Choose the voucher bedroom size and select specific towns or ZIP codes to search.")
 
 with col3:
-    st.markdown("**3. View Results**")
-    st.markdown("Browse affordable listings with contact info, photos, and links to Zillow and Google Maps.")
+    with st.container(border=True):
+        st.markdown("#### Step 3")
+        st.markdown("**Review Affordable Listings**")
+        st.markdown("See only rentals your client can afford. Click to view on Google and contact landlords.")
 
-st.markdown("### About Payment Standards")
-st.markdown("""
-Payment standards determine the maximum rent HUD will subsidize:
+st.markdown("---")
 
-- **Location**: Different ZIP codes have different standards
-- **Bedroom Size**: Larger units have higher standards
-- **Housing Authority**: Each county's HA sets their own standards (90-110% of FMR)
+# Glossary section - key terms explained in plain language
+st.markdown("### 📖 Key Terms Explained")
+st.markdown("*Understanding the basics of housing vouchers*")
 
-**The "Lesser Of" Rule**: If a tenant rents a unit larger than their voucher size,
-the payment standard is capped at their voucher's bedroom size. For example, a
-1-bedroom voucher holder renting a 2-bedroom unit receives the 1-bedroom payment standard.
+with st.expander("**What is a Payment Standard?** (Click to expand)", expanded=False):
+    st.markdown("""
+    **In simple terms:** The payment standard is the **maximum rent amount** that HUD will help pay for a unit.
 
-**Note**: Payment standards are updated annually, typically in January. Always verify
-current standards with the Housing Authority.
-""")
+    Think of it as a rent ceiling:
+    - If a rental costs **less** than the payment standard → Your client can afford it ✅
+    - If a rental costs **more** than the payment standard → Your client pays the difference out of pocket
+
+    **Why does it vary?**
+    - 📍 **Location:** Rent limits differ by ZIP code (higher in expensive areas)
+    - 🛏️ **Bedroom size:** Larger units have higher limits
+    - 🏛️ **Housing Authority:** Each county sets their own standards
+    """)
+
+with st.expander("**What is the 'Lesser Of' Rule?**", expanded=False):
+    st.markdown("""
+    **The short version:** If your client rents a unit **bigger** than their voucher size, HUD only pays based on their voucher size.
+
+    **Example:**
+    - Sarah has a **1-bedroom voucher** (entitled to $1,200 payment standard)
+    - She finds a nice **2-bedroom apartment** for $1,100/month
+    - Even though the 2-BR payment standard is $1,500, HUD uses the **1-BR limit of $1,200**
+    - Since $1,100 < $1,200, Sarah can afford this unit! ✅
+
+    **Why this matters for your search:**
+    This tool automatically handles this calculation. When you set the voucher size,
+    it uses that limit even when searching for larger units.
+    """)
+
+with st.expander("**What is HUD-VASH?**", expanded=False):
+    st.markdown("""
+    **HUD-VASH** = HUD-Veterans Affairs Supportive Housing
+
+    It's a program combining:
+    - 🏠 **Housing Choice Voucher** from HUD (rental assistance)
+    - 🏥 **Case management** from the VA (support services)
+
+    The goal is to help homeless veterans find stable housing while receiving
+    the support they need to stay housed.
+    """)
+
+# Pro tips for case managers
+st.markdown("---")
+st.markdown("### 💡 Tips for Case Managers")
+
+tip_col1, tip_col2 = st.columns(2)
+
+with tip_col1:
+    with st.container(border=True):
+        st.markdown("**Before Your Search**")
+        st.markdown("""
+        - Confirm your client's voucher bedroom size
+        - Know which areas they prefer or can access
+        - Have their move-in budget ready to discuss
+        """)
+
+with tip_col2:
+    with st.container(border=True):
+        st.markdown("**After Finding Listings**")
+        st.markdown("""
+        - Call landlords to verify availability
+        - Ask about HCV/VASH acceptance upfront
+        - Schedule viewings quickly (rentals move fast!)
+        """)
 
 # Footer
 st.markdown("---")
 st.caption(
     "Data from RentCast API. Payment standards from local Housing Authorities. "
-    "For HUD-VASH case managers helping veterans find housing."
+    "Built to help HUD-VASH case managers serve veterans more efficiently. "
+    "Always verify current payment standards with your Housing Authority."
 )
