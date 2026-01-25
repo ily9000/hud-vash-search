@@ -137,6 +137,10 @@ for i, county in enumerate(counties):
             st.markdown(f"**{num_towns}** towns  •  **{num_zips}** ZIP codes")
             st.caption(f"Standards updated: {county['effective_date']}")
 
+            # Link to official payment standards
+            if county.get('payment_standards_url'):
+                st.markdown(f"[📄 View official payment standards]({county['payment_standards_url']})")
+
             # Link to county page
             if st.button(f"Search {county['name']}", key=f"btn_{county['key']}", type="primary", use_container_width=True):
                 st.switch_page(f"pages/{county['url_slug']}.py")

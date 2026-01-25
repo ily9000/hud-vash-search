@@ -230,6 +230,8 @@ def render_county_page(county_key: str):
         st.caption(f"🏛️ {county['authority']}")
         st.caption(f"📅 Standards effective: {county['effective_date']}")
         st.caption(f"📍 {len(all_towns)} towns available")
+        if county.get('payment_standards_url'):
+            st.markdown(f"[📄 Official payment standards]({county['payment_standards_url']})")
 
         # Link back to home
         st.markdown("---")
@@ -417,10 +419,16 @@ def render_county_page(county_key: str):
     st.markdown("---")
     col_foot1, col_foot2 = st.columns(2)
     with col_foot1:
-        st.caption(
-            f"📊 Data from RentCast API • Payment standards from {county['authority']} "
-            f"(effective {county['effective_date']})"
-        )
+        if county.get('payment_standards_url'):
+            st.caption(
+                f"📊 Data from RentCast API • [Payment standards from {county['authority']}]({county['payment_standards_url']}) "
+                f"(effective {county['effective_date']})"
+            )
+        else:
+            st.caption(
+                f"📊 Data from RentCast API • Payment standards from {county['authority']} "
+                f"(effective {county['effective_date']})"
+            )
     with col_foot2:
         st.caption(
             "💡 **Tip:** Always call landlords to verify availability and confirm they accept HUD-VASH vouchers."
