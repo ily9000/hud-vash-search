@@ -81,7 +81,7 @@ while in Joliet (60435) it's $1,793/month.
     "lake": {
         "name": "Lake County",
         "authority": "Lake County Housing Authority (LCHA)",
-        "effective_date": "January 1, 2025",
+        "effective_date": "January 1, 2026",
         "url_slug": "Lake-County",
         "type": "direct",
         "payment_standards_url": "https://www.lakecountyha.org/plugins/show_image.php?id=1662",
@@ -399,55 +399,89 @@ DUPAGE_TOWN_TO_ZIPS = {
 # =============================================================================
 
 WILL_ZIP_AMOUNTS = {
-    # Housing Authority of Joliet - Effective October 2025
-    "60401": {"studio": 1419, "1br": 1518, "2br": 1716, "3br": 2200, "4br": 2552},  # Beecher
-    "60403": {"studio": 1650, "1br": 1771, "2br": 1991, "3br": 2563, "4br": 2970},  # Crest Hill
-    "60404": {"studio": 1881, "1br": 2013, "2br": 2266, "3br": 2915, "4br": 3377},  # Shorewood
-    "60408": {"studio": 1386, "1br": 1485, "2br": 1672, "3br": 2145, "4br": 2486},  # Braidwood
-    "60410": {"studio": 1518, "1br": 1617, "2br": 1826, "3br": 2354, "4br": 2717},  # Channahon
-    "60421": {"studio": 1287, "1br": 1386, "2br": 1562, "3br": 2013, "4br": 2332},  # Elwood
-    "60431": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
-    "60432": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
-    "60433": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
-    "60434": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
+    # Housing Authority of Joliet - Effective October 1, 2025
+    # Source: https://www.hajoliet.org/sites/default/files/file-attachements/2026_haj_payment_standards.10-2025.pdf
+    "60153": {"studio": 1386, "1br": 1485, "2br": 1672, "3br": 2156, "4br": 2486},  # Maywood
+    "60401": {"studio": 1287, "1br": 1375, "2br": 1551, "3br": 2002, "4br": 2310},  # Beecher
+    "60403": {"studio": 1540, "1br": 1650, "2br": 1859, "3br": 2398, "4br": 2772},  # Crest Hill
+    "60404": {"studio": 2189, "1br": 2332, "2br": 2629, "3br": 3388, "4br": 3916},  # Shorewood
+    "60407": {"studio": 1320, "1br": 1430, "2br": 1749, "3br": 2332, "4br": 2629},  # Godley
+    "60408": {"studio": 1375, "1br": 1474, "2br": 1661, "3br": 2134, "4br": 2475},  # Braidwood
+    "60410": {"studio": 1837, "1br": 1969, "2br": 2310, "3br": 3025, "4br": 3465},  # Channahon
+    "60416": {"studio": 1089, "1br": 1177, "2br": 1540, "3br": 2090, "4br": 2321},  # Coal City
+    "60417": {"studio": 1430, "1br": 1529, "2br": 1727, "3br": 2222, "4br": 2574},  # Crete
+    "60421": {"studio": 1265, "1br": 1342, "2br": 1518, "3br": 1958, "4br": 2266},  # Elwood
+    "60423": {"studio": 1683, "1br": 1793, "2br": 2024, "3br": 2607, "4br": 3014},  # Frankfort
+    "60431": {"studio": 1650, "1br": 1771, "2br": 2068, "3br": 2706, "4br": 3047},  # Joliet
+    "60432": {"studio": 1430, "1br": 1518, "2br": 1716, "3br": 2211, "4br": 2552},  # Joliet
+    "60433": {"studio": 1452, "1br": 1551, "2br": 1749, "3br": 2255, "4br": 2607},  # Joliet
+    "60434": {"studio": 1606, "1br": 1716, "2br": 1936, "3br": 2497, "4br": 2882},  # Joliet
     "60435": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Joliet
     "60436": {"studio": 1518, "1br": 1617, "2br": 1826, "3br": 2354, "4br": 2717},  # Joliet
+    "60439": {"studio": 1419, "1br": 1518, "2br": 1705, "3br": 2200, "4br": 2541},  # Lemont
     "60440": {"studio": 1881, "1br": 2013, "2br": 2266, "3br": 2915, "4br": 3377},  # Bolingbrook
-    "60441": {"studio": 1782, "1br": 1914, "2br": 2145, "3br": 2761, "4br": 3201},  # Lockport
-    "60442": {"studio": 1617, "1br": 1738, "2br": 1958, "3br": 2519, "4br": 2915},  # Manhattan
+    "60441": {"studio": 1716, "1br": 1837, "2br": 2068, "3br": 2662, "4br": 3080},  # Lockport
+    "60442": {"studio": 1265, "1br": 1353, "2br": 1529, "3br": 1969, "4br": 2277},  # Manhattan
     "60446": {"studio": 2112, "1br": 2255, "2br": 2541, "3br": 3267, "4br": 3784},  # Romeoville
-    "60448": {"studio": 1749, "1br": 1870, "2br": 2101, "3br": 2706, "4br": 3135},  # Mokena
-    "60449": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # Monee
-    "60451": {"studio": 1749, "1br": 1870, "2br": 2101, "3br": 2706, "4br": 3135},  # New Lenox
-    "60468": {"studio": 1320, "1br": 1419, "2br": 1595, "3br": 2057, "4br": 2387},  # Peotone
-    "60481": {"studio": 1287, "1br": 1386, "2br": 1562, "3br": 2013, "4br": 2332},  # Wilmington
-    "60490": {"studio": 1881, "1br": 2013, "2br": 2266, "3br": 2915, "4br": 3377},  # Bolingbrook
-    "60491": {"studio": 1650, "1br": 1771, "2br": 1991, "3br": 2563, "4br": 2970},  # Homer Glen
-    "60544": {"studio": 2013, "1br": 2156, "2br": 2431, "3br": 3124, "4br": 3619},  # Plainfield
-    "60564": {"studio": 2013, "1br": 2156, "2br": 2431, "3br": 3124, "4br": 3619},  # Naperville (Will Co portion)
-    "60585": {"studio": 2013, "1br": 2156, "2br": 2431, "3br": 3124, "4br": 3619},  # Plainfield
-    "60586": {"studio": 2013, "1br": 2156, "2br": 2431, "3br": 3124, "4br": 3619},  # Plainfield
+    "60447": {"studio": 1430, "1br": 1551, "2br": 1969, "3br": 2662, "4br": 2948},  # Minooka
+    "60448": {"studio": 1694, "1br": 1804, "2br": 2035, "3br": 2618, "4br": 3036},  # Mokena
+    "60449": {"studio": 1375, "1br": 1463, "2br": 1650, "3br": 2123, "4br": 2453},  # Monee
+    "60451": {"studio": 1485, "1br": 1595, "2br": 1793, "3br": 2310, "4br": 2673},  # New Lenox
+    "60466": {"studio": 1650, "1br": 1771, "2br": 1991, "3br": 2563, "4br": 2970},  # Park Forest
+    "60467": {"studio": 2134, "1br": 2277, "2br": 2563, "3br": 3300, "4br": 3817},  # Orland Park
+    "60468": {"studio": 1210, "1br": 1287, "2br": 1463, "3br": 1881, "4br": 2167},  # Peotone
+    "60471": {"studio": 1518, "1br": 1617, "2br": 1826, "3br": 2354, "4br": 2717},  # Richton Park
+    "60475": {"studio": 1166, "1br": 1243, "2br": 1397, "3br": 1804, "4br": 2079},  # Steger
+    "60481": {"studio": 1177, "1br": 1254, "2br": 1419, "3br": 1826, "4br": 2112},  # Wilmington
+    "60484": {"studio": 1683, "1br": 1793, "2br": 2024, "3br": 2607, "4br": 3014},  # University Park
+    "60487": {"studio": 1606, "1br": 1716, "2br": 1936, "3br": 2497, "4br": 2882},  # Tinley Park
+    "60490": {"studio": 2442, "1br": 2607, "2br": 2937, "3br": 3784, "4br": 4378},  # Bolingbrook
+    "60491": {"studio": 1892, "1br": 2024, "2br": 2277, "3br": 2937, "4br": 3388},  # Homer Glen
+    "60503": {"studio": 2167, "1br": 2343, "2br": 2750, "3br": 3619, "4br": 4048},  # Aurora
+    "60517": {"studio": 1716, "1br": 1837, "2br": 2068, "3br": 2662, "4br": 3080},  # Woodridge
+    "60544": {"studio": 2123, "1br": 2266, "2br": 2563, "3br": 3300, "4br": 3806},  # Plainfield
+    "60564": {"studio": 2442, "1br": 2607, "2br": 2937, "3br": 3784, "4br": 4378},  # Naperville
+    "60565": {"studio": 2079, "1br": 2211, "2br": 2497, "3br": 3212, "4br": 3718},  # Naperville
+    "60567": {"studio": 1793, "1br": 1914, "2br": 2156, "3br": 2783, "4br": 3212},  # Naperville
+    "60585": {"studio": 2387, "1br": 2563, "2br": 2937, "3br": 3817, "4br": 4345},  # Plainfield
+    "60586": {"studio": 2321, "1br": 2497, "2br": 2860, "3br": 3718, "4br": 4235},  # Plainfield
 }
 
 WILL_TOWN_TO_ZIPS = {
+    "Aurora": ["60503"],
     "Beecher": ["60401"],
     "Bolingbrook": ["60440", "60490"],
     "Braidwood": ["60408"],
     "Channahon": ["60410"],
+    "Coal City": ["60416"],
     "Crest Hill": ["60403"],
+    "Crete": ["60417"],
     "Elwood": ["60421"],
+    "Frankfort": ["60423"],
+    "Godley": ["60407"],
     "Homer Glen": ["60491"],
     "Joliet": ["60431", "60432", "60433", "60434", "60435", "60436"],
+    "Lemont": ["60439"],
     "Lockport": ["60441"],
     "Manhattan": ["60442"],
+    "Maywood": ["60153"],
+    "Minooka": ["60447"],
     "Mokena": ["60448"],
     "Monee": ["60449"],
+    "Naperville": ["60564", "60565", "60567"],
     "New Lenox": ["60451"],
+    "Orland Park": ["60467"],
+    "Park Forest": ["60466"],
     "Peotone": ["60468"],
     "Plainfield": ["60544", "60585", "60586"],
+    "Richton Park": ["60471"],
     "Romeoville": ["60446"],
     "Shorewood": ["60404"],
+    "Steger": ["60475"],
+    "Tinley Park": ["60487"],
+    "University Park": ["60484"],
     "Wilmington": ["60481"],
+    "Woodridge": ["60517"],
 }
 
 
@@ -456,49 +490,53 @@ WILL_TOWN_TO_ZIPS = {
 # =============================================================================
 
 LAKE_ZIP_AMOUNTS = {
-    # Lake County Housing Authority - Based on 2025 SAFMRs
+    # Lake County Housing Authority - Effective January 1, 2026
+    # Source: https://www.lakecountyha.org/plugins/show_image.php?id=1662
     "60002": {"studio": 1250, "1br": 1340, "2br": 1510, "3br": 1940, "4br": 2280},  # Antioch
-    "60010": {"studio": 2060, "1br": 2210, "2br": 2490, "3br": 3200, "4br": 3760},  # Barrington (Lake Co)
+    "60010": {"studio": 2190, "1br": 2340, "2br": 2670, "3br": 3440, "4br": 3980},  # Barrington
+    "60011": {"studio": 1470, "1br": 1570, "2br": 1770, "3br": 2500, "4br": 2800},  # Barrington
+    "60013": {"studio": 1450, "1br": 1550, "2br": 1750, "3br": 2250, "4br": 2619},  # Cary
     "60015": {"studio": 2190, "1br": 2340, "2br": 2640, "3br": 3390, "4br": 3980},  # Deerfield
-    "60020": {"studio": 1380, "1br": 1480, "2br": 1670, "3br": 2140, "4br": 2520},  # Fox Lake
-    "60030": {"studio": 1630, "1br": 1740, "2br": 1970, "3br": 2530, "4br": 2970},  # Grayslake
-    "60031": {"studio": 1630, "1br": 1740, "2br": 1970, "3br": 2530, "4br": 2970},  # Gurnee
-    "60035": {"studio": 2060, "1br": 2210, "2br": 2490, "3br": 3200, "4br": 3760},  # Highland Park
-    "60037": {"studio": 2190, "1br": 2340, "2br": 2640, "3br": 3390, "4br": 3980},  # Fort Sheridan
-    "60040": {"studio": 2060, "1br": 2210, "2br": 2490, "3br": 3200, "4br": 3760},  # Highwood
-    "60041": {"studio": 1500, "1br": 1610, "2br": 1810, "3br": 2330, "4br": 2740},  # Ingleside
-    "60042": {"studio": 1500, "1br": 1610, "2br": 1810, "3br": 2330, "4br": 2740},  # Island Lake
-    "60044": {"studio": 1760, "1br": 1880, "2br": 2120, "3br": 2730, "4br": 3200},  # Lake Bluff
-    "60045": {"studio": 2190, "1br": 2340, "2br": 2640, "3br": 3390, "4br": 3980},  # Lake Forest
-    "60046": {"studio": 1380, "1br": 1480, "2br": 1670, "3br": 2140, "4br": 2520},  # Lake Villa
-    "60047": {"studio": 1970, "1br": 2110, "2br": 2380, "3br": 3060, "4br": 3590},  # Long Grove
+    "60020": {"studio": 1370, "1br": 1470, "2br": 1660, "3br": 2130, "4br": 2500},  # Fox Lake
+    "60021": {"studio": 2000, "1br": 2135, "2br": 2405, "3br": 3100, "4br": 3590},  # Fox River Grove
+    "60030": {"studio": 1630, "1br": 1740, "2br": 1970, "3br": 2700, "4br": 3020},  # Grayslake
+    "60031": {"studio": 1690, "1br": 1800, "2br": 2030, "3br": 2610, "4br": 3020},  # Gurnee
+    "60035": {"studio": 2070, "1br": 2220, "2br": 2530, "3br": 3220, "4br": 3810},  # Highland Park
+    "60040": {"studio": 1860, "1br": 2000, "2br": 2240, "3br": 2880, "4br": 3340},  # Highwood
+    "60041": {"studio": 1190, "1br": 1280, "2br": 1450, "3br": 1870, "4br": 2165},  # Ingleside
+    "60042": {"studio": 1685, "1br": 1800, "2br": 2025, "3br": 2610, "4br": 3045},  # Island Lake
+    "60044": {"studio": 1600, "1br": 1750, "2br": 1900, "3br": 2450, "4br": 2900},  # Lake Bluff
+    "60045": {"studio": 2220, "1br": 2370, "2br": 2670, "3br": 3440, "4br": 3980},  # Lake Forest
+    "60046": {"studio": 1690, "1br": 1810, "2br": 2040, "3br": 2630, "4br": 2750},  # Lake Villa
+    "60047": {"studio": 1970, "1br": 2110, "2br": 2390, "3br": 3060, "4br": 3600},  # Lake Zurich/Long Grove
     "60048": {"studio": 1710, "1br": 1830, "2br": 2070, "3br": 2660, "4br": 3120},  # Libertyville
-    "60050": {"studio": 1440, "1br": 1540, "2br": 1740, "3br": 2230, "4br": 2620},  # McHenry (Lake Co)
-    "60060": {"studio": 1660, "1br": 1770, "2br": 2000, "3br": 2570, "4br": 3020},  # Mundelein
-    "60061": {"studio": 1970, "1br": 2110, "2br": 2380, "3br": 3060, "4br": 3590},  # Vernon Hills
-    "60064": {"studio": 1190, "1br": 1280, "2br": 1440, "3br": 1850, "4br": 2170},  # North Chicago
-    "60069": {"studio": 1970, "1br": 2110, "2br": 2380, "3br": 3060, "4br": 3590},  # Lincolnshire
-    "60073": {"studio": 1500, "1br": 1610, "2br": 1810, "3br": 2330, "4br": 2740},  # Round Lake
-    "60074": {"studio": 1630, "1br": 1740, "2br": 1970, "3br": 2530, "4br": 2970},  # Palatine (Lake Co)
-    "60083": {"studio": 1380, "1br": 1480, "2br": 1670, "3br": 2140, "4br": 2520},  # Wadsworth
-    "60084": {"studio": 1630, "1br": 1740, "2br": 1970, "3br": 2530, "4br": 2970},  # Wauconda
-    "60085": {"studio": 1260, "1br": 1350, "2br": 1520, "3br": 1950, "4br": 2290},  # Waukegan
-    "60087": {"studio": 1330, "1br": 1430, "2br": 1610, "3br": 2070, "4br": 2430},  # Waukegan
-    "60088": {"studio": 1190, "1br": 1280, "2br": 1440, "3br": 1850, "4br": 2170},  # Great Lakes
-    "60089": {"studio": 1970, "1br": 2110, "2br": 2380, "3br": 3060, "4br": 3590},  # Buffalo Grove
-    "60096": {"studio": 1380, "1br": 1480, "2br": 1670, "3br": 2140, "4br": 2520},  # Winthrop Harbor
-    "60099": {"studio": 1320, "1br": 1410, "2br": 1590, "3br": 2050, "4br": 2400},  # Zion
+    "60050": {"studio": 1425, "1br": 1525, "2br": 1750, "3br": 2225, "4br": 2600},  # McHenry
+    "60051": {"studio": 1775, "1br": 1905, "2br": 2170, "3br": 2765, "4br": 3270},  # McHenry
+    "60060": {"studio": 1660, "1br": 1770, "2br": 2000, "3br": 2600, "4br": 3020},  # Mundelein
+    "60061": {"studio": 1900, "1br": 2050, "2br": 2310, "3br": 2975, "4br": 3480},  # Vernon Hills
+    "60064": {"studio": 1190, "1br": 1400, "2br": 1715, "3br": 2015, "4br": 2400},  # North Chicago
+    "60069": {"studio": 2000, "1br": 2135, "2br": 2405, "3br": 3100, "4br": 3585},  # Lincolnshire
+    "60073": {"studio": 1590, "1br": 1700, "2br": 1920, "3br": 2500, "4br": 2900},  # Round Lake
+    "60074": {"studio": 1425, "1br": 1525, "2br": 1715, "3br": 2205, "4br": 2550},  # Palatine
+    "60081": {"studio": 1375, "1br": 1474, "2br": 1661, "3br": 2134, "4br": 2475},  # Spring Grove
+    "60083": {"studio": 1730, "1br": 1845, "2br": 2100, "3br": 2685, "4br": 3160},  # Wadsworth
+    "60084": {"studio": 1370, "1br": 1470, "2br": 1660, "3br": 2200, "4br": 2500},  # Wauconda
+    "60085": {"studio": 1280, "1br": 1370, "2br": 1540, "3br": 1980, "4br": 2290},  # Waukegan
+    "60087": {"studio": 1350, "1br": 1450, "2br": 1630, "3br": 2300, "4br": 2500},  # Waukegan
+    "60089": {"studio": 1990, "1br": 2140, "2br": 2440, "3br": 3110, "4br": 3680},  # Buffalo Grove
+    "60096": {"studio": 1250, "1br": 1340, "2br": 1510, "3br": 1940, "4br": 2260},  # Winthrop Harbor
+    "60099": {"studio": 1280, "1br": 1380, "2br": 1570, "3br": 2000, "4br": 2370},  # Zion
 }
 
 LAKE_TOWN_TO_ZIPS = {
     "Antioch": ["60002"],
-    "Barrington": ["60010"],
+    "Barrington": ["60010", "60011"],
     "Buffalo Grove": ["60089"],
+    "Cary": ["60013"],
     "Deerfield": ["60015"],
-    "Fort Sheridan": ["60037"],
     "Fox Lake": ["60020"],
+    "Fox River Grove": ["60021"],
     "Grayslake": ["60030"],
-    "Great Lakes": ["60088"],
     "Gurnee": ["60031"],
     "Highland Park": ["60035"],
     "Highwood": ["60040"],
@@ -507,12 +545,16 @@ LAKE_TOWN_TO_ZIPS = {
     "Lake Bluff": ["60044"],
     "Lake Forest": ["60045"],
     "Lake Villa": ["60046"],
+    "Lake Zurich": ["60047"],
     "Libertyville": ["60048"],
     "Lincolnshire": ["60069"],
     "Long Grove": ["60047"],
+    "McHenry": ["60050", "60051"],
     "Mundelein": ["60060"],
     "North Chicago": ["60064"],
+    "Palatine": ["60074"],
     "Round Lake": ["60073"],
+    "Spring Grove": ["60081"],
     "Vernon Hills": ["60061"],
     "Wadsworth": ["60083"],
     "Wauconda": ["60084"],
