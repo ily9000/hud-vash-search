@@ -111,9 +111,9 @@ st.markdown("""
 <div class="info-box">
     <strong>👋 Why this tool exists</strong><br>
     Housing voucher payment standards vary by ZIP code, and figuring out which rentals
-    you can actually afford means cross-referencing listings with confusing payment
-    standard tables. This tool does that automatically—enter your voucher size
-    and location, and see only listings within your payment standard.
+    are eligible for a voucher means cross-referencing Zillow listings with payment
+    standard tables for each zip code. This tool does that automatically—enter your
+    voucher size and location, and see only listings within your payment standard.
 </div>
 """, unsafe_allow_html=True)
 
