@@ -1,12 +1,12 @@
 """
-Will County HUD-VASH Rental Search
+Will County Rental Search
 Housing Authority of Joliet (HAJ)
 """
 
 import streamlit as st
 
 st.set_page_config(
-    page_title="Will County HUD-VASH Rental Search",
+    page_title="Will County Rental Search",
     page_icon="🏠",
     layout="wide"
 )

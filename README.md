@@ -1,13 +1,13 @@
-# HUD-VASH Rental Search Tool
+# Housing Voucher Rental Search Tool
 
-A web app that helps HUD-VASH case managers find affordable housing for homeless veterans in Illinois. Supports Cook, DuPage, Will, and Lake counties.
+A web app that helps Housing Choice Voucher (Section 8) holders and case managers find affordable rentals in Illinois. Supports Cook, DuPage, Will, and Lake counties.
 
 ## The Problem
 
-HUD-VASH case managers help homeless veterans find housing using housing vouchers. Finding a qualifying rental is tedious and time-consuming:
+Finding a rental that fits within voucher payment standards is tedious and time-consuming:
 
 - **Payment standards vary by ZIP code** - every housing authority sets different rates by location
-- **The "lesser of" rule is confusing** - if a veteran with a 2BR voucher wants a 3BR unit, the payment standard is capped at the 2BR rate
+- **The "lesser of" rule is confusing** - if someone with a 2BR voucher wants a 3BR unit, the payment standard is capped at the 2BR rate
 - **Manual searching takes time** - checking Zillow, Apartments.com, and Craigslist, then cross-referencing against payment standard tables
 
 ## What This Tool Does
@@ -31,7 +31,7 @@ HUD-VASH case managers help homeless veterans find housing using housing voucher
 
 The app uses the "lesser of" rule - the payment standard is based on whichever is smaller: the unit's bedroom count or the voucher's bedroom count.
 
-**Example**: A veteran has a 2BR voucher.
+**Example**: A voucher holder has a 2BR voucher.
 
 | Unit They Find | Payment Standard Used | Why |
 |----------------|----------------------|-----|
@@ -39,12 +39,12 @@ The app uses the "lesser of" rule - the payment standard is based on whichever i
 | 2BR | 2BR rate | Exact match |
 | 3BR | 2BR rate | Capped at voucher size |
 
-This means veterans can look at larger units, but HUD won't pay more than their voucher allows.
+This means voucher holders can look at larger units, but HUD won't pay more than their voucher allows.
 
 ## Quick Start
 
 1. **Select a county** from the home page
-2. **Set voucher size** - the client's bedroom entitlement
+2. **Set voucher size** - the bedroom entitlement on your voucher
 3. **Pick bedroom sizes to search** - can select multiple
 4. **Select towns** or enter ZIP codes directly
 5. **Review payment standards** shown in the sidebar

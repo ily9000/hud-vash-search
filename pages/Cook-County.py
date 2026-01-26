@@ -1,12 +1,12 @@
 """
-Cook County HUD-VASH Rental Search
+Cook County Rental Search
 Housing Authority of Cook County (HACC)
 """
 
 import streamlit as st
 
 st.set_page_config(
-    page_title="Cook County HUD-VASH Rental Search",
+    page_title="Cook County Rental Search",
     page_icon="🏠",
     layout="wide"
 )

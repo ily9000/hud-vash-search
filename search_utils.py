@@ -446,5 +446,5 @@ def render_county_page(county_key: str):
             )
     with col_foot2:
         st.caption(
-            "💡 **Tip:** Always call landlords to verify availability and confirm they accept HUD-VASH vouchers."
+            "💡 **Tip:** Always call landlords to verify availability and confirm they accept Housing Choice Vouchers."
         )

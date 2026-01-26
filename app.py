@@ -1,5 +1,5 @@
 """
-HUD-VASH Rental Search Tool - Illinois
+Housing Voucher Rental Search Tool - Illinois
 Landing page with county selection
 """
 
@@ -16,7 +16,7 @@ from payment_standards import (
 
 # Page configuration
 st.set_page_config(
-    page_title="HUD-VASH Rental Search - Illinois",
+    page_title="Housing Voucher Rental Search - Illinois",
     page_icon="🏠",
     layout="wide"
 )
@@ -101,18 +101,18 @@ st.markdown("""
 # Header section
 st.markdown("""
 <div class="main-header">
-    <h1>🏠 HUD-VASH Rental Search</h1>
-    <p style="font-size: 1.2rem; margin: 0;">Find affordable housing for veterans in Illinois</p>
+    <h1>🏠 Housing Voucher Rental Search</h1>
+    <p style="font-size: 1.2rem; margin: 0;">Find affordable rentals for Housing Choice Voucher holders in Illinois</p>
 </div>
 """, unsafe_allow_html=True)
 
 # Welcome message with plain language
 st.markdown("""
 <div class="info-box">
-    <strong>👋 Welcome, Case Managers!</strong><br>
-    This tool helps you quickly find rental listings that your veteran clients can afford
-    with their housing voucher. No more manual searching across multiple websites or
-    calculating payment standards by hand.
+    <strong>👋 Welcome!</strong><br>
+    This tool helps case managers and voucher holders quickly find rental listings that fit
+    within Housing Choice Voucher (Section 8) payment standards. No more manual searching
+    across multiple websites or calculating payment standards by hand.
 </div>
 """, unsafe_allow_html=True)
 
@@ -197,21 +197,22 @@ with st.expander("**What is the 'Lesser Of' Rule?**", expanded=False):
     it uses that limit even when searching for larger units.
     """)
 
-with st.expander("**What is HUD-VASH?**", expanded=False):
+with st.expander("**What voucher types does this tool support?**", expanded=False):
     st.markdown("""
-    **HUD-VASH** = HUD-Veterans Affairs Supportive Housing
+    This tool works for **all Housing Choice Voucher (Section 8) programs**, including:
 
-    It's a program combining:
-    - 🏠 **Housing Choice Voucher** from HUD (rental assistance)
-    - 🏥 **Case management** from the VA (support services)
+    - 🏠 **Standard HCV** - Traditional Section 8 vouchers
+    - 🎖️ **HUD-VASH** - Veterans Affairs Supportive Housing for homeless veterans
+    - 👨‍👩‍👧 **Family Unification Program (FUP)** - For families in child welfare system
+    - 🏢 **Project-Based Vouchers** - Tied to specific properties
+    - 🦽 **Mainstream Vouchers** - For non-elderly people with disabilities
 
-    The goal is to help homeless veterans find stable housing while receiving
-    the support they need to stay housed.
+    The payment standards are the same across all voucher types within each Housing Authority.
     """)
 
-# Pro tips for case managers
+# Pro tips
 st.markdown("---")
-st.markdown("### 💡 Tips for Case Managers")
+st.markdown("### 💡 Tips for Your Search")
 
 tip_col1, tip_col2 = st.columns(2)
 
@@ -219,9 +220,9 @@ with tip_col1:
     with st.container(border=True):
         st.markdown("**Before Your Search**")
         st.markdown("""
-        - Confirm your client's voucher bedroom size
-        - Know which areas they prefer or can access
-        - Have their move-in budget ready to discuss
+        - Confirm the voucher bedroom size
+        - Know which areas are preferred or accessible
+        - Have the move-in budget ready to discuss
         """)
 
 with tip_col2:
@@ -237,6 +238,6 @@ with tip_col2:
 st.markdown("---")
 st.caption(
     "Data from RentCast API. Payment standards from local Housing Authorities. "
-    "Built to help HUD-VASH case managers serve veterans more efficiently. "
+    "Built to help Housing Choice Voucher holders find affordable rentals. "
     "Always verify current payment standards with your Housing Authority."
 )
