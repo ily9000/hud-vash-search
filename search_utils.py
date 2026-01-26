@@ -216,6 +216,21 @@ def render_county_page(county_key: str):
 
         location_input = extra_zips
 
+        # Show payment standards preview for selected ZIPs
+        if location_input:
+            preview_zips = [z.strip() for z in location_input.split(",") if z.strip() and len(z.strip()) == 5 and z.strip().isdigit()]
+            if preview_zips:
+                st.markdown("---")
+                st.markdown(f"**💰 Payment Standards ({voucher_label})**")
+                for zip_code in preview_zips[:6]:  # Show max 6
+                    payment_std = get_payment_standard(county_key, zip_code, voucher_bedrooms)
+                    if payment_std:
+                        st.caption(f"ZIP {zip_code}: **${payment_std:,}/mo**")
+                    else:
+                        st.caption(f"ZIP {zip_code}: _not found_")
+                if len(preview_zips) > 6:
+                    st.caption(f"_+{len(preview_zips) - 6} more..._")
+
         st.markdown("")
         search_clicked = st.button("🔍 Search Rentals", type="primary", use_container_width=True)
 
