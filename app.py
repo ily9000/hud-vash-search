@@ -109,10 +109,11 @@ st.markdown("""
 # Welcome message with plain language
 st.markdown("""
 <div class="info-box">
-    <strong>👋 Welcome!</strong><br>
-    This tool helps case managers and voucher holders quickly find rental listings that fit
-    within Housing Choice Voucher (Section 8) payment standards. No more manual searching
-    across multiple websites or calculating payment standards by hand.
+    <strong>👋 Why this tool exists</strong><br>
+    Housing voucher payment standards vary by ZIP code, and figuring out which rentals
+    are eligible for a voucher means cross-referencing Zillow listings with payment
+    standard tables for each zip code. This tool does that automatically—enter your
+    voucher size and location, and see only listings within your payment standard.
 </div>
 """, unsafe_allow_html=True)
 
